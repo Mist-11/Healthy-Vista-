@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>乳腺癌生存预测</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static '/image/favicon.ico' %}" />
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static '/font/iconfont.css' %}">
+    <style>
+        label,
+        legend {
+            font-size: 16px;
+            /* 增加字体大小 */
+            color: #333;
+            /* 设置字体颜色 */
+            font-weight: bold;
+            /* 加粗字体 */
+            margin-bottom: 5px;
+            /* 在标签和输入框之间增加一些间距 */
+        }
+
+        input,
+        select {
+            font-size: 14px;
+            /* 也可以为输入框和下拉框设置字体大小 */
+            border-radius: 5px;
+            /* 给输入框和下拉框增加圆角 */
+            border: 1px solid #ccc;
+            /* 设置边框颜色 */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            /* 增加表单组之间的间距 */
+        }
+
+        .btn-navbar {
+            margin-left: 10px;
+        }
+
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #00265f;
+            color: white;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar-text {
+            margin-right: 20px;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #00265f;
+            color: white;
+            text-align: center;
+            font-size: 24px;
+            padding: 20px 0;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+
+        .form-check-label {
+            margin-left: 5px;
+        }
+
+        .iconfont,
+        .btn {
+            font-size: 18px;
+            line-height: 25px;
+        }
+
+        .subbutn {
+            border: 2px solid rgb(147, 179, 215);
+            color: #000000;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+        .subbutn:hover {
+            background-color: #00265f;
+            color: white;
+            box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+        }
+        .card-body label,input{
+            padding-top: 5px;
+        }
+        .btn{
+            color: #fff !important;
+        }
+        .btn:hover{
+             color:#fff;
+             font-weight: bold !important;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <span class="navbar-brand">乳腺癌生存预测</span>
+        <span class="navbar-text">Today: {{ current_date }}</span>
+        <span class="navbar-text">Welcome, {{ username }}</span>
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+        <a href="/usercenter_page/" class="btn btn-user-center">
+            <span class="iconfont">&#xe6e0;</span>用户中心</a>
+
+        <a href="/" class="btn btn-logout">
+            <span class="iconfont">&#xe66f;</span>
+            返回</a>
+    </nav>
+    </nav>
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">
+                请在下方输入病人各项数据
+            </div>
+            <div class="card-body">
+                <form id="parameterForm" class="row">
+                    {% csrf_token %}
+                    <div class="col-md-6">
+                        <!-- 所有左列的表单控件放在这里 -->
+                        <div class="form-group">
+                            <label for="age_at_diagnosis">患者年龄：</label>
+                            <input type="text" id="age_at_diagnosis" name="age_at_diagnosis" required><br>
+
+                            <label for="size">肿瘤尺寸（cm）：</label>
+                            <input type="text" id="size" name="size" required><br>
+
+                            <label for="lymph_nodes_positive">采集淋巴结样本中，含有癌细胞的淋巴结的数量：</label>
+                            <input type="text" id="lymph_nodes_positive" name="lymph_nodes_positive" required><br>
+
+                            <label for="stage">乳腺癌所处阶段：</label>
+                            <select id="stage" name="stage" required>
+                                <option value="0">0期</option>
+                                <option value="1">I期</option>
+                                <option value="2">II期</option>
+                                <option value="3">III期</option>
+                                <option value="4">IV期</option>
+                            </select>
+                            <br>
+
+                            <label for="lymph_nodes_removed">切除的淋巴结数：</label>
+                            <input type="text" id="lymph_nodes_removed" name="lymph_nodes_removed" required><br>
+
+                            <label for="NPI">诺丁汉预后指数：</label>
+                            <input type="text" id="NPI" name="NPI" required><br>
+
+                            <label for="grade">肿瘤组织学分级：</label>
+                            <select id="grade" name="grade" required>
+                                <option value="0">1级</option>
+                                <option value="1">2级</option>
+                                <option value="2">3级</option>
+                            </select>
+                            <br>
+
+                            <label for="histological">组织学类型：</label>
+                            <select id="histological" name="histological" required>
+                                <option value="0">浸润性导管癌</option>
+                                <option value="1">导管原位癌</option>
+                                <option value="2">浸润性小叶癌</option>
+                                <option value="3">小叶原位癌</option>
+                                <option value="4">髓样癌</option>
+                                <option value="5">黏液癌</option>
+                                <option value="6">管内乳头状癌</option>
+                                <option value="7">乳头状癌</option>
+                                <option value="8">管状癌</option>
+                                <option value="9">隐匿性癌</option>
+                                <option value="10">乳腺癌特异性炎性癌</option>
+                                <option value="11">乳腺佩吉特癌</option>
+                            </select>
+                            <br>
+
+                            <label for="ER_IHC_status">IHC检测法下雌激素受体呈：</label>
+                            <select id="ER_IHC_status" name="ER_IHC_status" required>
+                                <option value="0">阳性</option>
+                                <option value="1">阴性</option>
+                            </select>
+                            <br>
+
+
+                            <label for="ER_Expr">癌细胞对雌激素受体呈：</label>
+                            <select id="ER_Expr" name="ER_Expr" required>
+                                <option value="0">阴性</option>
+                                <option value="1">阳性</option>
+                            </select>
+                            <br>
+
+                            <label for="PR_Expz">癌细胞对孕激素受体呈：</label>
+                            <select id="PR_Expz" name="PR_Expz" required>
+                                <option value="0">阴性</option>
+                                <option value="1">阳性</option>
+                            </select>
+                            <br>
+
+                            <label for="HER2_IHC_status">IHC检测HER2蛋白的表达水平等级：</label>
+                            <select id="HER2_IHC_status" name="HER2_IHC_status" required>
+                                <option value="0">0</option>
+                                <option value="1">1+</option>
+                                <option value="2">2+</option>
+                                <option value="3">3+</option>
+                            </select>
+                            <br>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <!-- 所有右列的表单控件放在这里 -->
+                        <div class="form-group">
+                            <label for="HER2_SNP6_state">使用SNP6评估癌症是否对HER2呈：</label>
+                            <select id="HER2_SNP6_state" name="HER2_SNP6_state" required>
+                                <option value="0">阴性</option>
+                                <option value="1">弱阳性</option>
+                                <option value="2">阳性</option>
+                            </select>
+                            <br>
+
+                            <label for="Her2_Expr">癌症对HER2是：</label>
+                            <select id="Her2_Expr" name="Her2_Expr" required>
+                                <option value="0">阳性</option>
+                                <option value="1">阴性</option>
+                            </select>
+                            <br>
+
+                            <fieldset>
+                                <legend>Treatment: 患者接受了哪种治疗？</legend>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="surgery" name="treatment"
+                                        value="1">
+                                    <label class="form-check-label" for="surgery">手术治疗</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="chemotherapy" name="treatment"
+                                        value="2">
+                                    <label class="form-check-label" for="chemotherapy">化疗</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="radiation" name="treatment"
+                                        value="3">
+                                    <label class="form-check-label" for="radiation">放射治疗</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="hormone_therapy"
+                                        name="treatment" value="4">
+                                    <label class="form-check-label" for="hormone_therapy">激素治疗</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="targeted_therapy"
+                                        name="treatment" value="5">
+                                    <label class="form-check-label" for="targeted_therapy">靶向治疗</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="immunotherapy" name="treatment"
+                                        value="6">
+                                    <label class="form-check-label" for="immunotherapy">免疫治疗</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="endocrine_therapy"
+                                        name="treatment" value="7">
+                                    <label class="form-check-label" for="endocrine_therapy">内分泌治疗</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="biological_therapy"
+                                        name="treatment" value="8">
+                                    <label class="form-check-label" for="biological_therapy">生物治疗</label>
+                                </div>
+                            </fieldset>
+
+
+                            <label for="inf_men_status">肿瘤主要位于哪侧：</label>
+                            <select id="inf_men_status" name="inf_men_status" required>
+                                <option value="0">右乳</option>
+                                <option value="1">左乳</option>
+                            </select>
+                            <br>
+
+
+                            <label for="group">患者属于哪类特征：</label>
+                            <select id="group" name="group" required>
+                                <option value="0">第一类</option>
+                                <option value="1">第二类</option>
+                                <option value="2">第三类</option>
+                                <option value="3">第四类</option>
+                                <option value="4">第五类</option>
+                            </select>
+                            <br>
+
+                            <label for="cellularity">癌细胞量：</label>
+                            <select id="cellularity" name="cellularity" required>
+                                <option value="0">高</option>
+                                <option value="1">温和</option>
+                                <option value="2">低</option>
+                            </select>
+                            <br>
+
+                            <label for="Pam50_Subtype">PAM50测试结果：</label>
+                            <select id="Pam50_Subtype" name="Pam50_Subtype" required>
+                                <option value="0">LumA 管腔A型</option>
+                                <option value="1">LumB 管腔B型</option>
+                                <option value="2">HER2过表达型</option>
+                                <option value="3">Base 基底样型</option>
+                                <option value="4">Normal 正常乳腺组织</option>
+                                <option value="5">Basal 三阴性乳腺癌</option>
+                            </select>
+                            <br>
+
+                            <label for="int_clust_memb">癌症分子亚型的基因表达：</label>
+                            <select id="int_clust_memb" name="int_clust_memb" required>
+                                <option value="0">4ER</option>
+                                <option value="1">3</option>
+                                <option value="2">9</option>
+                                <option value="3">7</option>
+                                <option value="4">5</option>
+                                <option value="5">8</option>
+                                <option value="6">10</option>
+                                <option value="7">1</option>
+                                <option value="8">2</option>
+                                <option value="9">6</option>
+                            </select>
+                            <br>
+
+                            <label for="site">主要分布区域：</label>
+                            <select id="site" name="site" required>
+                                <option value="0">乳头</option>
+                                <option value="1">乳晕</option>
+                                <option value="2">导管</option>
+                                <option value="3">小叶</option>
+                                <option value="4">其他结构</option>
+                            </select>
+                            <br>
+
+                            <label for="Genefu">Genefu分类：</label>
+                            <select id="Genefu" name="Genefu" required>
+                                <option value="0">1类</option>
+                                <option value="1">2类</option>
+                                <option value="2">3类</option>
+                                <option value="3">4类</option>
+                            </select>
+                            <br>
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-center">
+                        <button class="subbutn" type="button" onclick="submitParameters()">提交数据，开始预测</button>
+                    </div>
+                </form>
+                <div id="loadingIndicator" style="display:none;">加载中...</div>
+                <div class="container mt-3" style="display: grid; place-items: center; min-height: 10vh;">
+                    <canvas id="survivalChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static '/js/chart.js' %}"></script>
+    <script>
+        function submitParameters() {
+            var age_at_diagnosis = document.getElementById("age_at_diagnosis").value;
+            var size = document.getElementById("size").value;
+            // 收集参数值
+            var lymphNodesPositive = document.getElementById('lymph_nodes_positive').value;
+            var stage = document.getElementById('stage').value;
+
+            var lymph_nodes_removed = document.getElementById("lymph_nodes_removed").value;
+            var NPI = document.getElementById("NPI").value;
+
+            var grade = document.getElementById('grade').value;
+            var gradeArray = [0, 0, 0];
+            gradeArray[grade] = 1; // 根据选择的等级设置数组中相应位置的值为1
+
+            var histologicalTypeIndex = document.getElementById('histological').value;
+            var typeArray = new Array(12).fill(0);
+            typeArray[histologicalTypeIndex] = 1;
+
+            var ER_IHC_status = document.getElementById("ER_IHC_status").value;
+            var ER_IHC_statusArray = [0, 0];
+            ER_IHC_statusArray[ER_IHC_status] = 1;
+
+            var erExprIndex = document.getElementById('ER_Expr').value;
+            var erExprArray = [0, 0];
+            erExprArray[erExprIndex] = 1;
+
+            var PR_ExpzIndex = document.getElementById('PR_Expz').value;
+            var PR_ExpzArray = [0, 0];
+            PR_ExpzArray[PR_ExpzIndex] = 1;
+
+            var her2IhcStatusIndex = document.getElementById('HER2_IHC_status').value;
+            var her2IhcStatusArray = [0, 0, 0, 0];
+            her2IhcStatusArray[her2IhcStatusIndex] = 1;
+
+            var her2Snp6StateIndex = document.getElementById('HER2_SNP6_state').value;
+            var her2Snp6StateArray = [0, 0, 0];
+            her2Snp6StateArray[her2Snp6StateIndex] = 1;
+
+            var her2ExprIndex = document.getElementById('Her2_Expr').value;
+            var her2ExprArray = [0, 0];
+            her2ExprArray[her2ExprIndex] = 1;
+
+            var treatmentArray = [
+                document.getElementById('surgery').checked ? 1 : 0,
+                document.getElementById('chemotherapy').checked ? 1 : 0,
+                document.getElementById('radiation').checked ? 1 : 0,
+                document.getElementById('hormone_therapy').checked ? 1 : 0,
+                document.getElementById('targeted_therapy').checked ? 1 : 0,
+                document.getElementById('immunotherapy').checked ? 1 : 0,
+                document.getElementById('endocrine_therapy').checked ? 1 : 0,
+                document.getElementById('biological_therapy').checked ? 1 : 0,
+            ];
+
+
+            var inf_men_statusIndex = document.getElementById('inf_men_status').value;
+            var inf_men_statusArray = new Array(2).fill(0);
+            inf_men_statusArray[inf_men_statusIndex] = 1;
+
+            var groupIndex = document.getElementById('group').value;
+            var groupArray = new Array(5).fill(0);
+            groupArray[groupIndex] = 1;
+
+            var cellularityIndex = document.getElementById('cellularity').value;
+            var cellularityArray = [0, 0, 0];
+            cellularityArray[cellularityIndex] = 1;
+
+            var pam50SubtypeIndex = document.getElementById('Pam50_Subtype').value;
+            var intClustMembIndex = document.getElementById('int_clust_memb').value;
+            var siteIndex = document.getElementById('site').value;
+            var genefuIndex = document.getElementById('Genefu').value;
+
+            // 生成对应的数组
+            var pam50SubtypeArray = new Array(6).fill(0);
+            pam50SubtypeArray[pam50SubtypeIndex] = 1;
+
+            var intClustMembArray = new Array(10).fill(0);
+            intClustMembArray[intClustMembIndex] = 1;
+
+            var siteArray = new Array(5).fill(0);
+            siteArray[siteIndex] = 1;
+
+            var genefuArray = new Array(4).fill(0);
+            genefuArray[genefuIndex] = 1;
+
+            // 构建参数数组
+            var parameters = {
+                age_at_diagnosis: age_at_diagnosis,
+                size: size,
+                lymph_nodes_positive: lymphNodesPositive,
+                stage: stage,
+                lymph_nodes_removed: lymph_nodes_removed,
+                NPI: NPI,
+                grade: gradeArray,
+                histological: typeArray,
+                ER_IHC_status: ER_IHC_statusArray,
+                ER_Expr: erExprArray,
+                PR_Expz: PR_ExpzArray,
+                HER2_IHC_status: her2IhcStatusArray,
+                HER2_SNP6_state: her2Snp6StateArray,
+                Her2_Expr: her2ExprArray,
+                Treatment: treatmentArray,
+                inf_men_status: inf_men_statusArray,
+                group: groupArray,
+                cellularity: cellularityArray,
+                Pam50_Subtype: pam50SubtypeArray,
+                int_clust_memb: intClustMembArray,
+                site: siteArray,
+                Genefu: genefuArray
+            };
+
+            // 将参数数组转换为 JSON 字符串
+            var parametersJSON = JSON.stringify(parameters);
+
+            document.getElementById('loadingIndicator').style.display = 'block';
+
+            // 使用 fetch API 将参数发送到后端
+            fetch('/cancer/BCpre/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json;charset=UTF-8',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: parametersJSON
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('网络有问题，请重试。');
+                    }
+                    return response.json(); // 解析响应为JSON
+                })
+                .then(text => JSON.parse(text))
+                .then(data => {
+                    document.getElementById('loadingIndicator').style.display = 'none';
+
+                    // 处理返回的数据
+                    var indexes = data.index; // X轴标签数组
+                    var survivalProbabilities = data.data.map(item => item[0]); // 将嵌套数组转换为单一数值数组
+
+                    // 获取 canvas 元素并初始化 Chart.js 图表
+                    var ctx = document.getElementById('survivalChart').getContext('2d');
+                    // 如果之前的图表实例存在，先销毁它
+                    if (window.survivalChart instanceof Chart) {
+                        window.survivalChart.destroy();
+                    }
+
+                    // 创建新的 Chart.js 图表实例
+                    window.survivalChart = new Chart(ctx, {
+                        type: 'line', // 图表类型
+                        data: {
+                            labels: indexes, // X轴标签
+                            datasets: [{
+                                label: '生存概率', // 数据集标签
+                                data: survivalProbabilities, // Y轴数据
+                                borderColor: 'rgb(75, 192, 192)', // 线条颜色
+                                tension: 0.1 // 线条平滑度
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                x: {
+                                    beginAtZero: true, // X轴从0开始
+                                    ticks: {
+                                        callback: function (value) {
+                                            // 假设X轴的标签已经是以天为单位
+                                            return value + ' 天';
+                                        }
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: true, // Y轴从0开始
+                                }
+                            },
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: '患者预计生存状况', // 图表标题
+                                    font: {
+                                        size: 24 // 增大标题字体大小
+                                    }
+                                },
+                                legend: {
+                                    display: true,
+                                    labels: {
+                                        font: {
+                                            size: 14 // 根据需要调整图例字体大小
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('loadingIndicator').style.display = 'none';
+                    alert('提交数据时发生错误，请重试');
+                });
+
+        }
+
+        function goBack() {
+            window.location.href = '/index/';
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="icon" type="image/x-icon" href="{% static '/image/favicon.ico' %}" />
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static '/font/iconfont.css' %}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #00265f;
+            color: white;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar-text {
+            margin-right: 20px;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #00265f;
+            color: white;
+            text-align: center;
+            font-size: 24px;
+            padding: 20px 0;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .iconfont,
+        .navbar span,
+        .btn {
+            font-size: 18px !important;
+        }
+
+        .navbar span {
+            line-height: 25px;
+
+        }
+        .card-body a:hover,
+        .navbar a:hover{
+            color:#fff;
+            font-weight: bold !important;
+        }
+
+        .btn-logout {
+
+            color: white;
+            border-radius: 5px;
+            padding: 5px 20px;
+
+        }
+
+        .btn-user-center {
+
+            color: white;
+        }
+
+        .btn-breast-cancer {
+            background-color: #00265f;
+            color: white;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+        .introhead{
+            width: 100%;
+            height: 160px;
+            background-color: #013f9bbd;
+
+        }
+        .logoitro{
+            float: left;
+            height: 100px;
+            width: 100px;
+            margin-left: 160px;
+        }
+        .introhead p{
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            float: left;
+            color: #fff;
+            font-size: 40px;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <span class="navbar-brand">Main Menu</span>
+        <span class="navbar-text">Today: {{ current_date }}</span>
+        <span class="navbar-text">Welcome, {{ username }}</span>
+        <span></span><span></span><span></span>
+        <a href="/usercenter_page/" class="btn btn-user-center">
+            <span class="iconfont">&#xe6e0;</span>用户中心</a>
+        <a href="/help_page/" class="btn btn-user-center">
+            <span class="iconfont">&#xe6b4;</span>
+            帮助中心</a>
+        {% if identity == "管理员" or identity == "系统管理员" %}
+        <a href="/backstage/" class="btn btn-user-center">
+
+            <span class="iconfont">&#xe6a3;</span>
+            后台管理</a>
+        {% endif %}
+        <a href="/logout/" class="btn btn-logout">
+            <span class="iconfont">&#xe6ce;</span>
+            退出登录</a>
+    </nav>
+    <div class="introhead">
+        <img class="logoitro" src="../static/image/logo23.png" alt="">
+   <br><p>HealthVista智能分析,</p><br><br>
+   <p style="font-size: 35px;">为临床决策揭示生存的奥秘。</p>
+    </div>
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">乳腺癌在线预测</div>
+                    <div class="card-body">
+                        <p>欢迎访问乳腺癌在线预测系统。</p>
+                        <p>在这里，您可以进行乳腺癌的在线预测。</p>
+                        <a href="/cancer/BCindex/" class="btn btn-breast-cancer">开始预测</a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">心脏病在线预测</div>
+                    <div class="card-body">
+                        <p>欢迎访问心脏病在线预测系统。</p>
+                        <p>在这里，您可以进行心脏病的在线预测。</p>
+                        <a href="/cancer/HDindex/" class="btn btn-breast-cancer">开始预测</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">肝癌在线预测</div>
+                    <div class="card-body">
+                        <p>欢迎访问肝癌在线预测系统。</p>
+                        <p>在这里，您可以进行肝癌的在线预测。</p>
+                        <a href="/cancer/HEindex/" class="btn btn-breast-cancer">开始预测</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

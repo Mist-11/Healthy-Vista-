@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帮助中心</title>
+    <link rel="icon" type="image/x-icon" href="{% static '/image/favicon.ico' %}"/>
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static '/font/iconfont.css' %}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #00265f;
+            color: white;
+        }
+
+        .navbar-brand,
+        .navbar-text {
+            font-size: 18px;
+        }
+
+        .container-fluid {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .left-menu {
+            flex: 1;
+            width: 200px;
+            margin-right: 50px;
+        }
+
+        .right-content {
+            flex: 3;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background-color: #00265f;
+            color: white;
+            font-size: 20px;
+        }
+
+        .list-group-item-action:hover {
+            background-color: #f0f0f0;
+        }
+
+        .iconfont,
+        .btn {
+            font-size: 18px;
+            line-height: 25px;
+        }
+
+        .btn-logout {
+            color: white;
+            border-radius: 5px;
+            padding: 5px 20px;
+            font-size: 18px;
+        }
+        .btn:hover{
+            color: #fff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+<nav class="navbar">
+    <span class="navbar-brand">帮助中心</span>
+    <span class="navbar-text">Today: {{ current_date }}</span>
+    <span class="navbar-text">Welcome, {{ username }}</span>
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+    <a href="/" class="btn btn-logout">
+        <span class="iconfont">&#xe66f;</span>
+        返回</a>
+    <a href="/logout/" class="btn btn-logout">
+        <span class="iconfont">&#xe6ce;</span>
+        退出登陆</a>
+</nav>
+<div class="container-fluid">
+    <div class="left-menu">
+        <div class="card">
+            <div class="card-header">疾病列表</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-action" id="breastCancer">乳腺癌</li>
+                <li class="list-group-item list-group-item-action" id="heartDisease">心脏病</li>
+                <li class="list-group-item list-group-item-action" id="hepatitis">肝炎</li>
+            </ul>
+        </div>
+        <div class="card" id="breastCancerMenu" style="display:none;">
+            <div class="card-header">乳腺癌详情</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-action" id="bcIntroduction">疾病信息</li>
+                <li class="list-group-item list-group-item-action" id="bcPredictionFields">预测需求字段介绍</li>
+                <li class="list-group-item list-group-item-action" id="bcTreatment">治疗手段</li>
+            </ul>
+        </div>
+        <div class="card" id="heartDiseaseMenu" style="display:none;">
+            <div class="card-header">心脏病详情</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-action" id="hdIntroduction">疾病信息</li>
+                <li class="list-group-item list-group-item-action" id="hdRiskFactors">预测需求字段介绍</li>
+                <li class="list-group-item list-group-item-action" id="hdTreatment">治疗手段</li>
+            </ul>
+        </div>
+        <div class="card" id="hepatitisMenu" style="display:none;">
+            <div class="card-header">肝炎详情</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-action" id="heIntroduction">疾病信息</li>
+                <li class="list-group-item list-group-item-action" id="heRiskFactors">预测需求字段介绍</li>
+                <li class="list-group-item list-group-item-action" id="heTreatment">治疗手段</li>
+            </ul>
+        </div>
+    </div>
+    <div class="right-content">
+        <div class="card">
+            <div class="card-header">详情</div>
+            <div class="card-body" id="infoContent">
+                请选择一项查看更多。
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="{% static '/js/jquery.min.js' %}"></script>
+<script src="{% static '/js/bootstrap.bundle.min.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        var infoContent = $('#infoContent'); // 引用 '#infoContent'
+
+        // 一级菜单项的点击事件
+        $('#breastCancer').click(function () {
+            $('.card[id$="Menu"]').hide(); // 首先隐藏所有二级菜单
+            $('#breastCancerMenu').show(); // 然后只显示乳腺癌的二级菜单
+        });
+
+        $('#heartDisease').click(function () {
+            $('.card[id$="Menu"]').hide(); // 首先隐藏所有二级菜单
+            $('#heartDiseaseMenu').show(); // 然后只显示心脏病的二级菜单
+        });
+        $('#hepatitis').click(function () {
+            $('.card[id$="Menu"]').hide(); // 首先隐藏所有二级菜单
+            $('#hepatitisMenu').show(); // 然后只显示肝炎的二级菜单
+        });
+
+        // 二级菜单项的点击事件
+        $('.list-group-item').click(function () {
+            var contentId = $(this).attr('id'); // 获取当前点击的二级菜单项的 ID
+            switch (contentId) {
+                case 'bcIntroduction':
+                    infoContent.html('<h5>乳腺癌相关介绍</h5>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;乳腺癌（breast carcinoma, BC）是女性最常见的恶性肿瘤之一，据资料统计，发病率占全身各种恶性肿瘤的7-10%。它的发病常与遗传有关，以及40—60岁间、绝经期前后的妇女发病率较高。通常发生在乳房腺上皮组织。女性居多，男性乳癌占全部乳癌患者的0.5%到1%。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;全球每一年有135万新增加的乳腺癌，其中有42万死亡，每年递增是2%。在西欧、北美等发达国家，乳腺癌发病率居女性癌瘤的首位。美国是乳腺癌全球最高发的国家，乳腺癌已经是女性肿瘤的首位，是肿瘤死亡的第二位。一位女性终生患乳癌的危险性是七分之一，每七个人里有一个女性会患乳腺癌。而且这种发病的风险是随着年龄的增加而上升的。中国，本来是低发国，但是最近20年，每年的递增速度是4.6%。中国大、中城市（特别是沿海城市）比农村及内陆地区发病率高，在北京、上海等大城市已经是女性肿瘤的首位，在农村目前是第五位。据统计，中国每年有4万多妇女死于本病，乳腺癌已成为严重威胁女性生命的严重疾病之一。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;近年的临床治疗发现：乳腺癌的十年存活率平均达百分之六十，第一期乳腺癌治疗后的存活率达百分之八十，零期乳腺癌治疗后的存活率更接近百分之百，因此早期发现及治疗非常重要。</p>'
+                    );
+                    break;
+                case 'bcPredictionFields':
+                    infoContent.html('<h5>预测需求字段介绍</h5>' +
+                        '<p>患者年龄：患者预测时的年龄大小。</p>' +
+                        '<p>肿瘤大小：患者预测时所得的肿瘤大小，以厘米为单位。</p>' +
+                        '<p>采集淋巴结样本中，含有癌细胞的淋巴结的数量：在癌症的诊断和治疗过程中，了解癌细胞是否已经扩散到淋巴系统是非常重要的一步。淋巴结是人体免疫系统的一部分，遍布全身，帮助身体抵御感染和疾病。当癌症发生时，癌细胞有可能从原发肿瘤处脱落并通过淋巴液（一种清澈的液体，流经淋巴系统）或血液传播到其他部位。淋巴结由于其在淋巴系统中的过滤作用，常常是癌细胞转移的第一站。这个指标主要用于评估癌症扩散。</p>' +
+                        '<p>乳腺癌阶段：分为0、Ⅰ、Ⅱ、Ⅲ和Ⅳ期，显然，期数越高，患者情况越不容乐观。</p>' +
+                        '<p>手术中实际移除的淋巴结总数：在癌症手术中，医生可能会决定除去一部分淋巴结，这个过程通常被称为淋巴结清扫术或淋巴结切除术。</p>' +
+                        '<p>NPI：NPI（Nottingham Prognostic Index）汉丁诺预后指数是一种用于评估早期乳腺癌患者预后的指数，它是基于肿瘤大小、淋巴结状态、肿瘤分级来计算的。根据NPI的值，可以将患者分为不同的预后群体，从而有助于指导治疗决策和预测疾病的长期结果。一般来说，NPI值越低，预后越好；NPI值越高，预后越差。</p>' +
+                        '<p>组织学分级：组织学上分为1级、2级和3级，级别越高表示乳腺癌的恶性程度越高，预后越差。</p>' +
+                        '<p>组织学分类：乳腺癌根据病理分为以下类型：</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;非浸润性癌：</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;①导管内癌：癌细胞局限在乳腺导管内，未突破导管壁基底膜。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;②小叶原位癌：癌细胞未突破末梢乳管或腺体泡基底膜，属于早期乳腺癌，预后好，不需要化疗。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;早期浸润性癌</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;①浸润性导管癌：最常见的一种类型，预后好。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;②早期浸润性小叶癌。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;浸润性癌</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;①浸润性特殊癌：包括乳头状癌、髓样癌、小管癌、腺样囊性癌、粘液腺癌、大汗腺样癌、鳞状细胞癌。这类型乳腺癌分化程度一般较高、预后尚好。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;②浸润性非特殊癌：包括浸润性导管癌、浸润性小叶癌、硬癌、髓样癌、单纯癌、腺癌等。这类乳腺癌分化程度低，预后较特殊癌差。</p>' +
+                        '<p> 使用SNP6评估癌症是否对HER2呈阳性：</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;阴性：HER2基因未过度表达或扩增，通常不会考虑使用针对HER2的靶向治疗。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HER2基因表达或扩增处于边界状态，可能需要进一步测试来确定是否适合HER2靶向治疗。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HER2基因过度表达或扩增，患者可能从针对HER2的靶向治疗中获益。</p>' +
+                        '<p>癌症对 HER2 是阳性还是阴性：</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;阳性：表示HER2基因或蛋白过度表达，这类患者可能对HER2靶向治疗有反应。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;阴性：表示HER2基因或蛋白表达正常，这类患者可能不会从HER2靶向治疗中获益。</p>' +
+                        '<p>治疗方式：患者接受的治疗方式。</p>' +
+                        '<p>肿瘤位置：左右位置不同，对患者影响的部位和程度也不一致。</p>' +
+                        '<p>患者属于哪类特征。根据特征的不同，患者的治疗情况与抵抗能力也有所差异。</p>' +
+                        '<p>化疗后的癌细胞量：通过该项指标，有助于评估治疗效果。</p>' +
+                        '<p>PAM50测试结果：PAM50是一种基因表达分析，用于确定乳腺癌的亚型，有助于预测疾病进展和治疗反应。</p>' +
+                        '<p>癌症分子亚型的基因表达：这些亚型有助于进一步细化治疗方案和预后评估。</p>' +
+                        '<p>主要分布区域：指肿瘤在乳房内的主要分布区域，包括乳头、乳晕、导管、小叶等。</p>' +
+                        '<p>Genefu分类：基于基因表达的分类系统，用于进一步划分乳腺癌亚型，以指导治疗决策。</p>');
+                    break;
+                case 'bcTreatment':
+                    infoContent.html('<h5>常见治疗手段</h5>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;乳癌的治疗方法包括外科手术切除、放射治疗、化学治疗和激素治疗等。治疗乳癌或许只采用其中一种方法或几种方法的组合，治疗的方法视个别病情而定，因人而异，并受其它因素影响，包括患者是否绝经、健康状况、肿瘤的种类、大小、显微镜下的形态及其是否扩散到乳房以外等。</p>' +
+                        '<h5>外科手术</h5>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;手术治疗仍为乳腺癌的主要治疗手段之一。术式有多种。选用何种术式都必须严格掌握以根治为主保留功能及外形为辅的原则。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;乳房切除手术的范围，取决于肿瘤的大小、性质和扩散的程度。手术是在持续硬外麻或全麻下进行的中等程度的手术。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;术前要做好配合工作，如皮试、配血、备皮、全身检查、练习在床上大小便，术前晚餐后禁食及服安眠药等。术后麻醉药力过后患者可恢复正常饮食。伤口将放有一条胶管连接引流瓶，以便排清伤口区积聚的淋巴液，有利于伤口愈合。乳房切除术后伤口愈合好，一般8-14天则可出院，2-3周后回院拆线。</p>' +
+                        '<h5>放射治疗</h5>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;放射治疗(放疗) 是利用高能量射线来消灭癌细胞，在治疗癌症的同时，希望能减低正常细胞的伤害，整个放射疗程一般需5-6周时间。乳癌的放疗通常会引起轻微的副作用，如：</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;短暂性皮肤红肿，表皮脱落（类似太阳晒）；</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;皮肤变厚及肤色加深；</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;恶心、呕吐及疲倦； </p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;少部分病人可能并发肺炎，应积极治疗。</p>' +
+                        '<h5>化疗</h5>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;化疗是利用抗癌药物来破坏癌细胞的发生和分裂以达到杀死癌细胞的目的，患者接受手术或放射治疗后，医生可能使用此疗法作为辅助治疗，以减低癌症复发的机会。一般来说，整个疗程为六个月，化疗药物可分为口服及静脉注射两种，化疗每次的疗程有几天，随后是几个星期的休息，让身体从化疗的副作用中逐渐恢复。</p>' +
+                        '<h5>内分泌治疗</h5>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;激素是人体自然产生的物质，能控制正常细胞的生长和活动，性激素包括雌激素和黄体酮，激素亦可影响乳癌细胞的生长，乳癌的激素治疗包括了反激素治疗，用来防止女性激素对乳癌细胞产生作用，现在最常使用的一种激素是三苯氧胺，此药每天服食两次，每次一片，疗程为期二年。其副作用轻微，对绝经后妇女最常见的副作用为潮红，轻度恶心及阴道分泌物增加等，绝经前妇女可有停经，月经不规则。</p>' +
+                        '<h5>分子靶向治疗</h5>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;近年来，分子靶向治疗作为乳腺癌治疗的一种新手段，在乳腺癌治疗中显示出一定的疗效，日益受到学术界的重视。目前对于乳腺癌的治疗主要有手术、放疗、化疗和内分泌治疗等4种手段。近年来，随着对恶性肿瘤发病的基因和分子机制研究的不断深入，针对致癌基因的分子靶向治疗技术被应用于医学临床。分子靶向治疗是以肿瘤细胞中特有的基因片段为治疗位点，通过调节或阻断这些基因片段功能达到治疗疾病的目的。靶向治疗特异性强，效果显著，基本上不损伤正常组织，因此肿瘤靶向治疗是肿瘤治疗中最有前景的方案。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;乳腺癌分子靶向治疗是指针对乳腺癌发生、发展有关的信号通路及其癌基因相关表达产物进行治疗。分子靶向药物通过阻断肿瘤细胞或相关细胞的信号转导，来控制细胞基因表达的改变，从而抑制或杀死肿瘤细胞。常用的药物有：曲妥珠单抗、贝伐单抗等。</p>' +
+                        '<h5>免疫治疗</h5>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;利用活化吞噬细胞、自然杀手细胞、伤害性T细胞等免疫细胞，诱导白细胞素，干扰素-γ，肿瘤坏死因子-α等细胞因子的分泌。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;诱导癌细胞凋亡。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;与传统的化学治疗药物（丝裂霉素、卡莫斯丁等）合用，既增加药效，又减轻化疗过程中的毒副作用。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;与免疫治疗药物（干扰素-α2b）有协同作用。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;减缓晚期癌症患者的疼痛，增加食欲，改善患者的生活质量。</p>');
+                    break;
+                case 'hdIntroduction':
+                    infoContent.html('<h5>心脏病相关介绍</h5>' +
+                        ' <p>心脏病是指涉及心脏的各种疾病和异常情况。它们可以影响心脏的结构和功能，导致血液流动问题、供氧不足或其他心脏相关的问题。以下是一些常见的心脏病和相关信息：</p>' +
+                        ' <p>冠心病：冠心病是心脏动脉疾病的一种，通常由于动脉粥样硬化引起，这会导致心脏供血不足。常见症状包括胸痛、呼吸困难和心律不齐。</p>' +
+                        ' <p>心肌梗塞：也称为心肌梗死，是由于冠状动脉的突然阻塞而导致心肌缺血和坏死。典型症状是剧烈胸痛、呼吸急促和出汗。</p>' +
+                        ' <p>心律失常：这是心脏跳动的异常节奏。它可能是过快、过慢或不规律的心跳。常见的心律失常包括心房颤动和室性心动过速。</p>' +
+                        ' <p>心力衰竭：心脏无法将足够的血液泵送到身体的其他部分，导致疲劳、呼吸困难和水肿等症状。它通常是其他心脏问题的后果。</p>' +
+                        ' <p>风湿性心脏病：这是由于未经治疗的风湿热导致的心脏瓣膜损伤，最常见的是二尖瓣和主动脉瓣。它可能导致心脏瓣膜功能不全，需要手术修复或替换。</p>' +
+                        ' <p>先天性心脏病：这些是出生时就存在的心脏结构异常，可能涉及心脏的血管、瓣膜或心室的问题。它可以在婴儿时期或儿童时期就被发现，可能需要手术干预。...</p>'
+                    );
+                    break;
+                case 'hdRiskFactors':
+                    infoContent.html('<h5>预测需求字段介绍</h5>' +
+                        '<p>射血分数：随着心脏的每一次搏动，心肌都会有规律的收缩和舒张。在收缩过程中，左心室将心脏里的血液输送到身体的其他部位。当心脏舒张时，心室又充满了血液。射血分数就是指每次收缩时心腔内泵出的血液百分比。 </p>' +
+                        '<p>血液CPK酶:</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;肌酸激酶作为心肌酶谱里的一项，升高通常代表心肌或者肌肉组织可能存在炎症或者损伤。当组织内的细胞被破坏，就会将细胞内的肌酸激酶释放到血液中，此时抽血化验就可以检测到肌酸激酶升高。</p>' +
+                        "<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;血液中的肌酸激酶显著升高时，通常提示心肌损伤，甚至严重时有心肌缺血、心肌梗死。所以肌酸激酶作为生物的血清酶学标志物之一，可以用来反映心肌损害的严重程度。</p>" +
+                        '<p>血小板：血小板是人体血液中的有形成分之一，具有维持血管内皮完整性以及黏附、聚集、释放、收缩和促凝等功能，对于血小板的止血作用十分重要。血小板中数量的异常和功能的异常均是出血性疾病或血栓性疾病的重要病因。</p>' +
+                        '<p>血肌酐：肌酐是肌肉在人体内进行代谢的产物，每20g肌肉代谢可产生1mg肌酐。肌酐主要由肾小球滤过排放到体外。血肌酐高出正常值多数意味肾脏受损。过低的原因是由于肾脏在受到各种病因的侵犯后，先是受损的肾脏固有细胞发生表型转化，形成病理变化，刺激肾脏内成纤维细胞转化成肌成纤维细胞，又同时侵犯并激发了固有的正常肾组织，</p>' +
+                        '<p>血清纳：</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;血清纳是指血清中钠离子浓度 ，单位mmol/L,人血血清钠正常范围135-145mmol/L，血清钠的测定具有重要的临床意义。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;低钠可能会导致如下症状：</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.合并细胞外流量减少的低钠血症：A.肾性丢失钠（尿钠浓度＞20mmol/L）艾迪生病、失盐性肾炎、利尿剂、渗透性利尿。B.肾外性丢失钠（尿钠浓度＜10mmol/L）：从消化道丢失、严重灼伤、“third space”（第三间隙）。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.合并细胞外液量增加的低钠血症：心功能不全、肝硬化、肾病综合征（尿钠浓度＜10mmol/L）；慢性和急性肾功能不全（尿钠浓度不定）。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.细胞外液量正常（或轻度增加）的低钠血症（尿钠排泄钠摄取量）：抗利尿激素分泌、异常综合征、尿崩症、黏液性水肿、脑垂体功能不全。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;高钠可能会导致如下症状：</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.脱水：A.蒸发：发汗的增加：发热、高温（环境）、灼伤等；呼吸道感染。B.肾性排水量增加（肾性失水）：肾性尿崩症；渗透性利尿。C.下视丘功能障碍：中枢性尿崩症；原发性高钠血症。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.钠负荷过剩：A.输入过多高渗氯化钠、碳酸氢钠溶液。B.摄取钠过剩。</p>' +
+                        '<p>抽烟： 吸烟是心脏病的一个重要危险因素，与多种心血管疾病的发生发展密切相关。</p>' +
+                        '<p>红细胞或血红蛋白是否减少：贫血是指血红蛋白水平低于正常，可能因心脏不得到足够的氧气而加重心脏负担。在心脏病患者中，贫血是一个需要关注的共病。</p>' +
+                        '<p>糖尿病：糖尿病患者心脏病发生的风险较高，管理血糖对预防心脏病并发症非常重要。</p>' +
+                        '<p>高血压：高血压是心脏病最常见的危险因素之一，长期高血压会损伤心脏和血管，增加心脏病风险。</p>'
+                    );
+                    break;
+                case 'hdTreatment':
+                    infoContent.html('<h5>治疗手段</h5>' +
+                        '<p>心脏病的治疗手段因病情严重程度、患者的个体情况以及医生的建议而有所不同。以下是一些常见的心脏病治疗手段：</p>' +
+                        '<p>药物治疗：包括降压药、降脂药、抗凝药、抗血栓药等，这些药物可以帮助控制高血压、高胆固醇、心律失常等心脏病风险因素，减少心脏负担。</p>' +
+                        '<p>介入治疗：介入性治疗包括冠状动脉狭窄的支架植入术（PCI）和经皮冠状动脉介入治疗（PTCA），这些手术可以帮助扩张狭窄的冠状动脉，改善心脏供血。</p>' +
+                        '<p>搭桥手术：冠状动脉搭桥手术（CABG）是一种手术治疗方法，通过移植其他血管来绕过狭窄或堵塞的冠状动脉，改善心脏供血。</p>' +
+                        '<p>起搏器和除颤器：起搏器和除颤器是用于治疗心律失常的设备，可以通过发放电脉冲来维持正常的心率和心律。</p>' +
+                        '<p>心脏移植：对于一些严重的心脏疾病，如心力衰竭等，心脏移植可能是最后的治疗选择。</p>' +
+                        '<p>心脏康复：心脏康复是通过运动、营养指导、心理支持等多种手段帮助患者康复和改善心脏健康的过程。</p>' +
+                        '<p>生活方式干预：包括健康饮食、适量运动、戒烟戒酒等健康生活方式的改变，有助于降低心脏病的风险和改善心脏健康。</p>' +
+                        '<p>心理治疗：对于一些患有心脏病的患者，心理治疗可以帮助他们应对焦虑、抑郁等心理问题，改善心脏健康。</p>'
+                    );
+                    break;
+                case 'heIntroduction':
+                    infoContent.html('<h5>肝炎相关介绍</h5>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;肝炎（Hepatitis）是肝脏的炎症。肝炎的原因可能不同，最常见的是病毒造成的，此外还有自身免疫造成的。酗酒也可以导致肝炎。肝炎分急性和慢性肝炎。由病毒造成的肝炎按照其病毒系列不同分为甲型肝炎、乙型肝炎、丙型肝炎、丁型肝炎、戊型肝炎和庚型肝炎共六种类型型病毒性肝炎。能引起肝脏细胞肿胀，是世界上流传广泛，危害很大的传染病之一。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;各种病因引起的肝炎，其临床表现相似，并无特异性，故单凭临床表现并不能确定病因。肝炎的早期症状及表现，如：食欲减退，消化功能差，进食后腹胀，没有饥饿感；厌吃油腻食物，如果进食便会引起恶心、呕吐，活动后易感疲倦。如果肝炎没有得到及时有效的治疗，部分患者会进展为肝硬化，甚至肝癌，这对患者的生活质量将产生重大的影响。　</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;肝炎的种类有病毒性肝炎、酒精性肝炎、自身免疫性肝炎、药物性肝炎、非酒精性脂肪性肝炎等。</p>'
+                    );
+                    break;
+                case 'heRiskFactors':
+                    infoContent.html('<h5>肝炎需求字段介绍</h5>' +
+                        "<p>是否使用类固醇药物:</p>" +
+                        "<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;类固醇是一类常用于治疗各种疾病的药物，包括炎症性疾病、自身免疫性疾病和器官移植排斥反应等。这些药物的使用可能导致一些副作用，其中包括对肝功能的影响。</p>"+
+                        "<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;长期和高剂量使用类固醇药物可能增加肝脏受损的风险，包括肝功能异常、脂肪肝、肝炎等。此外，类固醇还可能影响肝脏的代谢功能，导致血糖升高、胆固醇水平增加等问题。</p>"+
+                        "<p>是否疲劳:疲劳可能对肝脏产生一定的影响，尤其是长期和严重的疲劳。肝脏是身体中最重要的器官之一，负责许多重要的功能，包括代谢、排毒和蛋白质合成等。长期的疲劳可能会导致身体各个系统的紊乱，从而对肝脏产生不利影响。</p>" +
+                        "<p>是否厌食:</p>" +
+                        "<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;长期厌食可能导致脂肪肝，即肝脏组织中脂肪的沉积增加。由于身体缺乏足够的营养供应，肝脏可能开始分解存储的脂肪，导致脂肪在肝脏内的积累。</p>"+
+                        "<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;严重的营养不良和体重减轻可能会影响肝脏的正常功能，导致肝功能异常。这可能表现为肝酶水平升高、胆红素水平异常等。</p>"+
+                        "<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;蛋白质代谢异常：厌食可能导致蛋白质的分解，肝脏可能会受到影响，因为肝脏是蛋白质代谢的关键器官之一。蛋白质的不足可能影响肝脏的正常功能。</p>"+
+                        "<p>是否肝脏硬化：肝脏硬化（肝硬化）是一种严重的肝脏疾病，通常是由于长期的肝损伤和炎症导致肝脏组织的纤维化和结构性改变而发展而来。</p>"+
+                        "<p>是否出现蜘蛛痣:</p>" +
+                        "<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;蜘蛛痣是一种皮肤病变，通常表现为小型的红色或紫色凸起斑点，中心有一条或多条细小的血管放射出去，形似蜘蛛的形状，因此得名。这些血管可以在压力下消退，然后再次出现。</p>"+
+                        "<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;蜘蛛痣是一种皮肤病变，通常表现为小型的红色或紫色凸起斑点，中心有一条或多条细小的血管放射出去，形似蜘蛛的形状，因此得名。这些血管可以在压力下消退，然后再次出现。</p>"+
+                        "<p>是否出现静脉曲张:静脉曲张是一种常见的血管疾病，通常发生在下肢的浅静脉系统中，特别是在腿部。它是指静脉血管扩张、变形和瓦解，形成了扭曲、蓝紫色的血管簇或结节。</p>" +
+                        "<p>是否使用抗病毒药物:</p>" +
+                        "<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;抗病毒药物的副作用：一些抗病毒药物可能会导致肝功能异常或肝损伤等副作用。这些副作用可能包括肝酶水平升高、肝炎、脂肪肝、胆汁淤积和肝损伤等。不同的药物可能会有不同的副作用谱，因此在使用抗病毒药物时，应密切监测肝功能指标。</p>"+
+                        "<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;肝毒性：一些抗病毒药物可能具有肝毒性，即直接对肝脏产生损害。这种毒性可能是由于药物本身的特性导致的，也可能是由于药物代谢产生的代谢产物对肝脏的影响。</p>"+
+                        "<p>是否感到不适:某些类型的不适可能与肝脏问题相关，或者是肝脏问题的症状之一。例如：腹部不适：持续的腹部不适可能是消化系统问题的症状，包括肝脏问题如脂肪肝、肝炎或胆囊疾病等。背部不适：在某些情况下，背部不适可能与肝脏问题有关，尤其是当肝脏肿大或出现疼痛时。</p>" +
+                        "<p>是否肝脏肿大:肝脏肿大可能是由于多种原因引起的，包括肝炎、脂肪肝、肝硬化、肝癌等。肝脏肿大本身可能会对肝脏产生一些影响，其中包括：肝功能受损、胀痛和不适、压迫周围器官、血液循环受影响等等。</p>"+
+                        "<p>脾脏是否可触及:脾脏一般来说是不易触及的，因为它位于人体左上腹部，被肋骨遮盖。但是，在某些情况下，脾脏可能会肿大而变得可触及。脾脏肿大可能与多种疾病有关，包括感染性疾病、肝疾病、免疫性疾病、血液病等。</p>"+
+                        "<p>是否出现腹水:腹水是指在腹腔内积聚的液体，通常是在肝脏疾病的情况下发生。肝脏在正常情况下负责过滤血液中的废物和液体，但是当肝脏受到损害时，它可能无法有效地执行这一功能。这可能导致以下几种情况，从而引起腹水的形成。</p>"+
+                        "<p>胆红素水平:胆红素是由体内红细胞代谢产生的一种黄色素，它在肝脏中经过转化并排泄到胆汁中。胆红素水平与肝脏之间有密切的关系，因为肝脏在胆红素代谢和排泄中扮演着关键的角色。</p>"+
+                        "<p>碱性磷酸酶水平:碱性磷酸酶（ALP）是一种存在于细胞膜上的酶，存在于多种组织中，包括肝脏、骨骼、肠道、胰腺等。在肝脏中，ALP主要分布在胆管细胞的细胞膜上，因此肝脏疾病或胆道梗阻等情况可能导致血清中ALP水平升高。</p>"+
+                        "<p>谷草转氨酶水平:谷草转氨酶（AST）是一种存在于细胞质中的酶，在肝脏、心脏、肌肉和其他组织中都有分布。在肝脏中，AST主要存在于肝细胞的细胞质中。因此，AST水平的升高可能反映了肝细胞损伤或其他组织损伤。</p>"+
+                        "<p>白蛋白水平:血清白蛋白是由肝脏合成的重要蛋白质，它在维持血浆渗透压、运输营养物质和药物、以及调节血液的酸碱平衡等方面发挥着重要作用。因此，血清白蛋白水平通常被视为肝功能的一个指标。肝功能：</p>"+
+                        "<p>凝血时间:凝血时间是指血液凝结的时间，通常通过凝血时间（PT）和部分凝血活酶时间（PTT）来评估。这些凝血时间可以间接反映肝脏功能，因为肝脏在凝血系统中发挥凝血因子合成、凝血因子降解、抗凝血蛋白和纤溶酶的合成等重要作用。</p>"
+                    );
+                    break;
+                case 'heTreatment':
+                    infoContent.html('<h5>肝炎治疗手段介绍</h5>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;肝炎的治疗很复杂，应该根据病因来采取具体的有效的治疗方法。比如病毒性肝炎（尤其是乙肝）就应该包括抗病毒治疗，而甲型病毒性肝炎却不需要抗病毒治疗，酒精性肝炎关键是戒酒，综合其他一些护肝等对症支持治疗，自身免疫性肝炎关键是调节免疫</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;某些类型的肝炎，如甲型肝炎，戊型肝炎和乙型肝炎等急性病毒形式，是自限性疾病，这意味着身体免疫系统最终将能够摧毁导致该疾病的病毒，自限性疾病通常不会发展为慢性病。除了控制恶心和疼痛等支持疗法外，很少需要药物治疗自限性肝炎。然而，通过多休息，避免饮酒和服用治疗症状的药物，许多人在几周后完全康复。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;干扰素是一种由人体免疫系统制成的蛋白质，可以对抗病毒，它的抗病毒特性使其成为抵抗病毒性乙型肝炎和丙型肝炎的有力武器。药物科学家研究了这种蛋白质并开发了一种合成形式药物，也称为干扰素，合成干扰素的作用类似于天然蛋白质，医生使用这种强效疗法来帮助控制体内肝炎病毒的水平。不幸的是，这种治疗方法昂贵并且具有显着的副作用。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;医生经常结合使用不同的抗病毒药物来更好地对抗病毒。例如，干扰素治疗通常可与其他抗病毒药物如拉米夫定或利巴韦林联合用于丙型肝炎感染者，药物组合本身比单一药物具有更强的治疗效果。与干扰素类似，副作用可能很严重，然而这种联合治疗的成本相对合理。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有时肝炎已发展成如此严重的疾病，肝脏移植是唯一的治疗方法。这是一种复杂的外科手术，涉及用供肝替换失败的肝脏。每年都有成千上万的人完成肝移植，但因为涉及很多风险，所以这是最后的手段。</p>' +
+                        '<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;对于某些类型的肝炎来说，未来是光明的，因为科学家正在努力改进现有的治疗方法，并开发新的药物，如抗病毒药物，更有效地防止肝细胞中的病毒复制。</p>'
+                    );
+                    break;
+
+                default:
+                    infoContent.html('选择一项了解更多。');
+            }
+            $('#' + $(this).closest('.card').attr('id')).show(); // 重新显示当前二级菜单，确保它保持可见
+        });
+    });
+
+
+</script>
+
+
+</body>
+
+</html>

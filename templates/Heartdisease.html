@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心脏病生存预测</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static '/image/favicon.ico' %}" />
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static '/font/iconfont.css' %}">
+    <style>
+        label,
+        legend {
+            font-size: 16px;
+            /* 增加字体大小 */
+            color: #333;
+            /* 设置字体颜色 */
+            font-weight: bold;
+            /* 加粗字体 */
+            margin-bottom: 5px;
+            /* 在标签和输入框之间增加一些间距 */
+        }
+
+        input,
+        select {
+            font-size: 14px;
+            /* 也可以为输入框和下拉框设置字体大小 */
+            border-radius: 5px;
+            /* 给输入框和下拉框增加圆角 */
+            border: 1px solid #ccc;
+            /* 设置边框颜色 */
+        }
+
+        .btn-warning .form-group {
+            margin-bottom: 20px;
+            /* 增加表单组之间的间距 */
+        }
+
+        .btn-navbar {
+            margin-left: 10px;
+        }
+
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #00265f;
+            color: white;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar-text {
+            margin-right: 20px;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #00265f;
+            color: white;
+            text-align: center;
+            font-size: 24px;
+            padding: 20px 0;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+
+        .form-check-label {
+            margin-left: 5px;
+        }
+        .iconfont,
+        .btn {
+            font-size: 18px;
+            line-height: 25px;
+        }
+       
+        .subbutn {
+            border: 2px solid rgb(147, 179, 215);
+            color: #000000;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+        .subbutn:hover {
+            background-color: #00265f;
+            color: white;
+            box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+        }
+        .card-body label,input{
+            padding-top: 5px;
+        }
+        .navbar a{
+            color:#fff !important;
+        }
+        .btn{
+            color: #fff !important;
+        }
+        .navbar a:hover{
+            color:#fff;
+            font-weight: bold !important;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <span class="navbar-brand">心脏病生存预测</span>
+        <span class="navbar-text">Today: {{ current_date }}</span>
+        <span class="navbar-text">Welcome, {{ username }}</span>
+        <span></span><span></span><span></span><span></span><span></span><span></span>
+        <a href="/usercenter_page/" class="btn btn-user-center">
+            <span class="iconfont">&#xe6e0;</span>用户中心</a>
+
+        <a href="/" class="btn btn-logout">
+            <span class="iconfont">&#xe66f;</span>
+            返回</a>
+    </nav>
+   
+    <div class="container mt-3">
+        <div class="card">
+            <div class="card-header">
+                请在下方输入病人各项数据
+            </div>
+            <div class="card-body">
+                <form id="parameterForm" class="row">
+                    {% csrf_token %}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="age">患者年龄：</label>
+                            <input type="text" id="age" name="age" required><br>
+                           
+                            <label for="sex">性别：</label>
+                            <select id="sex" name="sex" required>
+                                <option value="0">男</option>
+                                <option value="1">女</option>
+                            </select>
+                            <br>
+
+                            <label for="smoking">是否抽烟：</label>
+                            <select id="smoking" name="smoking" required>
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+                            <br>
+
+                            <label for="anaemia">红细胞或血红蛋白是否减少：</label>
+                            <select id="anaemia" name="anaemia" required>
+                                <option value="0">否</option>
+                                <option value="1">是</option>       
+                            </select>
+                            <br>
+                        
+
+                            <label for="diabetes">是否有糖尿病：</label>
+                            <select id="diabetes" name="diabetes" required>
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+                            <br>
+                           
+                            <label for="high_blood_pressure">是否有高血压：</label>
+                            <select id="high_blood_pressure" name="high_blood_pressure" required>
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+
+                       
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <!-- 所有右列的表单控件放在这里 -->
+                        <div class="form-group">
+                            <label for="ejection_fraction">射血分数：</label>
+                            <input type="text" id="ejection_fraction" name="ejection_fraction" required><br>
+
+                            <label for="creatinine_phosphokinase">血液CPK酶水平(mcg/L):</label>
+                            <input type="text" id="creatinine_phosphokinase" name="creatinine_phosphokinase"
+                                required><br>
+                            <label for="platelets">血液中的血小板(k/ml)：</label>
+                            <input type="text" id="platelets" name="platelets" required><br>
+
+                            <label for="serum_creatinine">血肌酐水平(mg/dL)：</label>
+                            <input type="text" id="serum_creatinine" name="serum_creatinine" required><br>
+
+
+                            <label for="serum_sodium">血清纳(Mmol/L)：</label>
+                            <input type="text" id="serum_sodium" name="serum_sodium" required><br>
+
+                           
+                           
+                            <label for="time">患病时间（天）：</label>
+                            <input type="text" id="time" name="time" required><br>
+
+                        </div>
+                    </div>
+
+                    <div class="col-12 text-center">
+                        <button class="subbutn" type="button" onclick="submitParameters()">提交数据，开始预测</button>
+                    </div>
+                </form>
+                <div id="loadingIndicator" style="display:none;">加载中...</div>
+                <div id="resultMessage" style="display:none;"></div> <!-- 新添加的提示消息容器 -->
+                <div class="container mt-3" style="display: grid; place-items: center; min-height: 10vh;">
+                    <!-- 这里放置你的组件内容 -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static '/js/chart.js' %}"></script>
+    <script>
+        function submitParameters() {
+            var age = document.getElementById("age").value;
+            var creatinine_phosphokinase = document.getElementById('creatinine_phosphokinase').value;
+            var ejection_fraction = document.getElementById("ejection_fraction").value;
+            var platelets = document.getElementById('platelets').value;
+            var serum_creatinine = document.getElementById("serum_creatinine").value;
+            var serum_sodium = document.getElementById("serum_sodium").value;
+            var time = document.getElementById("time").value;
+            var anaemia = document.getElementById("anaemia").value;
+            var diabetes = document.getElementById('diabetes').value;
+            var high_blood_pressure = document.getElementById("high_blood_pressure").value;
+            var sex = document.getElementById("sex").value;
+            var smoking = document.getElementById("smoking").value;
+
+            // 构建参数数组
+            var parameters = {
+                age: age,
+                anaemia: anaemia,
+                creatinine_phosphokinase: creatinine_phosphokinase,
+                diabetes: diabetes,
+                platelets: platelets,
+                ejection_fraction: ejection_fraction,
+                high_blood_pressure: high_blood_pressure,
+                serum_creatinine: serum_creatinine,
+                serum_sodium: serum_sodium,
+                sex: sex,
+                smoking: smoking,
+                time: time
+            };
+
+            // 将参数数组转换为 JSON 字符串
+            var parametersJSON = JSON.stringify(parameters);
+
+            document.getElementById('loadingIndicator').style.display = 'block';
+
+            // 使用 fetch API 将参数发送到后端
+            fetch('/cancer/HDpre/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json;charset=UTF-8',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: parametersJSON
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('网络有问题，请重试。');
+                    }
+                    return response.json(); // 解析响应为JSON
+                })
+                .then(data => {
+                    document.getElementById('loadingIndicator').style.display = 'none';
+                    let resultMessage = document.getElementById('resultMessage');
+                    if (data.result === 0) {
+                        resultMessage.innerHTML = "当前预测结果显示，该对象无明显致命风险。请保持现状，并监控后续变化。如需获取详细信息，请访问用户中心查阅完整报告。";
+                    } else if (data.result === 1) {
+                        resultMessage.innerHTML = "当前预测结果显示，该对象存在较大致命风险。请及时就医。如需获取详细信息，请访问用户中心查阅完整报告。";
+                    } else {
+                        resultMessage.innerHTML = "未知预测结果";
+                    }
+                    resultMessage.style.display = 'block'; // 显示提示消息
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('loadingIndicator').style.display = 'none';
+                    alert('提交数据时发生错误，请重试');
+                });
+
+        }
+
+        function goBack() {
+            window.location.href = '/index/';
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+
+</html>

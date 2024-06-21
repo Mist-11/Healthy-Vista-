@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Center</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'image/favicon.ico' %}" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'font/iconfont.css' %}">
+    <style>
+        .record-heading {
+            color: black;
+            /* 与导航栏颜色一致 */
+            border-bottom: 2px solid #000000;
+            /* 添加一条底部边框以增加强调 */
+            padding-bottom: 10px;
+            /* 底部内边距，与边框有一定间距 */
+            font-weight: 500;
+            /* 字体加粗 */
+            text-align: center;
+            /* 文本居中 */
+        }
+
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #00265f;
+            color: white;
+            font-size: 18px;
+        }
+
+        .navbar-brand {
+
+            font-weight: bold;
+            margin-right: 50px;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .table {
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        .iconfont,
+        .btn {
+            font-size: 18px;
+            line-height: 25px;
+        }
+        .btn:hover{
+             color:#fff;
+             font-weight: bold !important;
+        }
+
+        .btn-detail {
+            border: 2px solid rgb(147, 179, 215);
+          color: #000000;
+         
+        }
+        .btn-detail:hover{
+            background-color: #00265f;
+            color: white;
+            box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-logout {
+            color: white;
+            border-radius: 5px;
+            padding: 5px 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <span class="navbar-brand">用户中心</span>
+        <span class="navbar-text">Today: {{ current_date }}</span>
+        <span class="navbar-text">Welcome, {{ username }}</span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <a class="btn btn-logout mr-2" href="/" role="button">
+            <span class="iconfont">&#xe66f;</span>
+            返回</a>
+        <a href="/logout/" class="btn btn-logout">
+            <span class="iconfont">&#xe6ce;</span>
+            退出登录</a>
+    </nav>
+
+    <div class="container">
+        <h2 class="record-heading">我的记录</h2>
+        <table class="table" style="text-align: center;">
+            <thead>
+                <tr>
+                    <th>预测类型</th>
+                    <th>预测时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td>{{ record.record_type }}</td>
+                    <td class="timestamp" data-timestamp="{{ record.timestamp }}"></td>
+                    <td>
+                        <!-- “查看详情”按钮 -->
+                        <button class="btn btn-detail"
+                            onclick="findDetailRecord('{{ record.timestamp }}', '{{ username }}')">查看报告单
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // 选择所有带有timestamp类的元素
+            var timestampElements = document.querySelectorAll('.timestamp');
+
+            timestampElements.forEach(function (el) {
+                var timestamp = parseInt(el.getAttribute('data-timestamp'), 10); // 从data属性获取时间戳
+                var date = new Date(timestamp);
+
+                var options = {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                };
+
+                // 更新元素文本以显示格式化的日期时间
+                el.textContent = date.toLocaleDateString('zh-CN', options);
+            });
+        });
+
+        function formatDate(timestamp) {
+
+            var date = new Date(Number(timestamp));
+            // 获取年、月、日、小时、分钟和秒
+            var year = date.getFullYear();
+            var month = ('0' + (date.getMonth() + 1)).slice(-2); // 月份从0开始，需要加1，并确保两位数格式
+            var day = ('0' + date.getDate()).slice(-2); // 确保两位数格式
+            var hours = ('0' + date.getHours()).slice(-2);
+            var minutes = ('0' + date.getMinutes()).slice(-2);
+            var seconds = ('0' + date.getSeconds()).slice(-2);
+
+            // 拼接成指定格式的字符串
+            return year + month + day + hours + minutes + seconds;
+        }
+
+        // 添加查看详情的函数
+        function findDetailRecord(timestamp, username) {
+
+            const formattedDateTime = formatDate(timestamp);
+            const formattedUsername = String(username);
+            const formattedTimestamp = String(formattedDateTime);
+            // 发送请求获取 PDF 数据
+            fetch(`/find_detail_record/${formattedUsername}/${formattedTimestamp}/`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob(); // 将响应数据作为Blob对象返回
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                .then(blob => {
+                    var fileURL = URL.createObjectURL(blob); // 创建Blob URL
+                    window.open(fileURL); // 在新窗口中打开PDF
+                })
+                .catch(error => {
+                    console.error('Error fetching PDF:', error);
+                });
+
+        }
+    </script>
+
+</body>
+
+</html>

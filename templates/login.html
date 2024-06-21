@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="icon" type="image/x-icon" href="{% static '/image/favicon.ico' %}" />
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            min-width: 1920px;
+            height: 100%;
+            overflow: hidden;
+            background-color: #00265f;
+            /* 提供一个背景颜色以填补可能出现的空白区域 */
+        }
+
+        .con {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            /* 防止图片溢出视口 */
+        }
+
+        #rotate-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120vw;
+            /* 增加宽度以确保覆盖 */
+            height: 120vw;
+            /* 增加高度以确保覆盖 */
+            transform: translate(-50%, -50%) scale(1);
+            /* 调整平移和缩放 */
+            object-fit: cover;
+            filter: sepia(1) saturate(8) hue-rotate(180deg) brightness(0.7) contrast(1.5);
+            animation: rotate-animation 1s ease-in-out forwards;
+        }
+
+        @keyframes rotate-animation {
+            from {
+                transform: translate(-50%, -50%) rotate(180deg) scale(1);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg) scale(1);
+            }
+        }
+
+
+        .title {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            font-size: 60px;
+            color: white;
+            opacity: 0;
+            transform: translate(-50%, 20px);
+            /* Start 20px below the final position */
+            transition: opacity 1s, transform 1s;
+        }
+
+        .intro {
+            position: absolute;
+            top: 45%;
+            /* Position below the title */
+            left: 50%;
+            transform: translateX(-100%);
+            /* Start off-screen to the left */
+            font-size: 24px;
+            color: white;
+            opacity: 0;
+            transition: opacity 1s 1s, transform 1s 1s;
+            /* Delay appearance and movement */
+        }
+
+        .login-btn {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #fff;
+            border: none;
+            padding: 6px 20px;
+            border-radius: 5px;
+            color: rgb(8, 80, 135);
+            opacity: 0;
+            transform: translate(-50%, 20px);
+            /* Start 20px below the final position */
+            transition: opacity 1s, transform 1s;
+        }
+
+        @keyframes rotateAroundCenter {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(120deg);
+            }
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.5s linear;
+        }
+
+        .modal-content {
+           
+            border-radius: 5px;
+            width: 500px;
+            text-align: center;
+        }
+
+        .close {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            right: 0;
+            color: #fff;
+            cursor: pointer;
+        }
+        .close:hover{
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .card-header {
+            position: relative;
+            background-color: #073d8f;
+            color: #fff;
+            text-align: center;
+            font-size: 24px;
+            padding: 20px 0;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .card-body {
+            padding: 20px;
+            color: #000;
+        }
+
+        .card-body label {
+            float: left;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .btn-login {
+            background-color: #073d8f;
+            color: white;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 18px;
+            width: 100%;
+            border: none;
+            transition: background-color 0.3s ease;
+            margin-bottom: 5px;
+        }
+
+        .btn-login:hover {
+            color: #fff;
+            border: #013d7d 1px soo;
+        }
+
+        .register-link a {
+            color: #073d8f;
+            text-decoration: underline;
+        }
+        .forget-link{
+            margin-bottom: 5px;
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="con">
+        <img src="../static/image/bg.png" id="rotate-image" alt="Rotating image">
+
+    </div>
+    <div class="title" id="pageTitle">HealthVista</div>
+    <div class="intro" id="pageIntro">Deep Learning for Deeper Health Insights </div>
+    <button class="login-btn" id="loginButton">Get Start</button>
+
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+
+            <div class="card-header">登陆
+                <span class="close">&times;</span>
+            </div>
+            <div class="card-body">
+                <form id="login-form" action="/login/" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="username">用户名</label>
+                        <input type="text" id="username" name="username" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <input type="password" id="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="forget-link">
+                        <a href="/forget_page/">忘记密码</a>
+                    </div>
+                    <button type="submit" class="btn btn-login">登陆</button>
+                </form>
+
+                <div class="register-link">
+                    <a href="/register_page/">注册新用户</a>
+                </div>
+              
+                <div id="message-container"></div>
+            </div>
+            <!-- Form elements here -->
+        </div>
+    </div>
+    <script>
+        const rotateImage = document.getElementById("rotate-image");
+        const title = document.getElementById('pageTitle');
+        const intro = document.getElementById('pageIntro');
+        const loginButton = document.getElementById('loginButton');
+        const loginModal = document.getElementById('loginModal');
+        const closeModal = document.querySelector('.close');
+        rotateImage.addEventListener('animationend', function () {
+            title.style.opacity = '1';
+            title.style.transform = 'translate(-50%, -50%)';
+            setTimeout(() => {
+                intro.style.opacity = '1';
+                intro.style.transform = 'translate(-50%, 0)';
+            }, 20);
+            setTimeout(() => {
+                loginButton.style.opacity = '1';
+                loginButton.style.transform = 'translate(-50%, 0)';
+            }, 2000);
+        });
+        // Button click to open modal
+        loginButton.addEventListener('click', function () {
+            loginModal.style.visibility = 'visible';
+            loginModal.style.opacity = '1';
+        });
+
+        // Close modal
+        closeModal.addEventListener('click', function () {
+            loginModal.style.visibility = 'hidden';
+            loginModal.style.opacity = '0';
+        });
+    </script>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function (event) {
+            event.preventDefault(); // 阻止表单默认提交行为
+
+            var formData = new FormData(this);
+
+            fetch('/login/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        data.message = '网络错误,请重试。';
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.message) {
+                        var messageContainer = document.getElementById('message-container');
+                        messageContainer.innerHTML = '<div class="alert alert-info">' + data.message +
+                            '</div>';
+                    }
+                    if (data.redirect_url) {
+                        window.location.href = data.redirect_url; // 重定向到新页面
+                    }
+                })
+        });
+    </script>
+</body>
+
+</html>

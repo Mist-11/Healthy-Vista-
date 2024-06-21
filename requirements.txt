@@ -1,0 +1,12 @@
+Django==4.1
+matplotlib==3.7.2
+numpy==1.24.3
+pandas==1.4.4
+pycox==0.2.3
+PyMySQL==1.0.2
+reportlab==3.6.13
+seaborn==0.12.2
+torch==2.2.2
+torchtuples==0.2.2
+lightgbm==4.1.0
+openpyxl==3.0.10

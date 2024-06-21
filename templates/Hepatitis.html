@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>肝炎生存预测</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static '/image/favicon.ico' %}"/>
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static '/font/iconfont.css' %}">
+    <style>
+        label,
+        legend {
+            font-size: 16px;
+            /* 增加字体大小 */
+            color: #333;
+            /* 设置字体颜色 */
+            font-weight: bold;
+            /* 加粗字体 */
+            margin-bottom: 5px;
+            /* 在标签和输入框之间增加一些间距 */
+        }
+
+        input,
+        select {
+            font-size: 14px;
+            /* 也可以为输入框和下拉框设置字体大小 */
+            border-radius: 5px;
+            /* 给输入框和下拉框增加圆角 */
+            border: 1px solid #ccc;
+            /* 设置边框颜色 */
+        }
+
+        .btn-warning .form-group {
+            margin-bottom: 20px;
+            /* 增加表单组之间的间距 */
+        }
+
+        .btn-navbar {
+            margin-left: 10px;
+        }
+
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #00265f;
+            color: white;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar-text {
+            margin-right: 20px;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #00265f;
+            color: white;
+            text-align: center;
+            font-size: 24px;
+            padding: 20px 0;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+
+        .form-check-label {
+            margin-left: 5px;
+        }
+
+        .iconfont,
+        .btn {
+            font-size: 18px;
+            line-height: 25px;
+            color: white;
+        }
+
+        .subbutn {
+            margin-top: 20px;
+            border: 2px solid rgb(147, 179, 215);
+            color: #000000;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+        .subbutn:hover {
+            background-color: #00265f;
+            color: white;
+            box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-body label, input {
+            padding-top: 5px;
+        }
+
+        .btn {
+            color: #fff !important;
+        }
+
+        .btn:hover {
+            color: #fff;
+            font-weight: bold !important;
+        }
+    </style>
+    <link rel="stylesheet" href="{% static '/font/iconfont.css' %}">
+</head>
+
+<body>
+<nav class="navbar">
+    <span class="navbar-brand">肝炎生存预测</span>
+    <span class="navbar-text">Today: {{ current_date }}</span>
+    <span class="navbar-text">Welcome, {{ username }}</span>
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+    <a href="/usercenter_page/" class="btn btn-user-center">
+        <span class="iconfont">&#xe6e0;</span>用户中心</a>
+
+    <a href="/" class="btn btn-logout">
+        <span class="iconfont">&#xe66f;</span>
+        返回</a>
+</nav>
+
+<div class="container mt-3">
+    <div class="card">
+        <div class="card-header">
+            请在下方输入病人各项数据
+        </div>
+        <div class="card-body">
+            <form id="parameterForm" class="row">
+                {% csrf_token %}
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="Age">患者年龄：</label>
+                        <input type="text" id="Age" name="Age" required><br>
+
+                        <label for="Sex">性别：</label>
+                        <select id="Sex" name="Sex" required>
+                            <option value="1">男</option>
+                            <option value="2">女</option>
+                        </select>
+                        <br>
+
+                        <label for="Steroid">是否使用类固醇药物：</label>
+                        <select id="Steroid" name="Steroid" required>
+                            <option value="1">否</option>
+                            <option value="2">是</option>
+                        </select>
+                        <br>
+
+                        <label for="Antivirals">是否使用抗病毒药物：</label>
+                        <select id="Antivirals" name="Antivirals" required>
+                            <option value="1">否</option>
+                            <option value="2">是</option>
+                        </select>
+                        <br>
+
+
+                        <label for="Fatigue">是否感觉疲劳：</label>
+                        <select id="Fatigue" name="Fatigue" required>
+                            <option value="1">否</option>
+                            <option value="2">是</option>
+                        </select>
+                        <br>
+
+                        <label for="Malaise">是否感觉到不适：</label>
+                        <select id="Malaise" name="Malaise" required>
+                            <option value="1">否</option>
+                            <option value="2">是</option>
+                        </select>
+
+                        <label for="Anorexia">是否厌食：</label>
+                        <select id="Anorexia" name="Anorexia" required>
+                            <option value="1">否</option>
+                            <option value="2">是</option>
+                        </select>
+
+                        <label for="Liver_Big">肝脏是否肿大：</label>
+                        <select id="Liver_Big" name="Liver_Big" required>
+                            <option value="1">否</option>
+                            <option value="2">是</option>
+                        </select>
+
+                        <label for="Liver_Firm">肝脏是否硬化：</label>
+                        <select id="Liver_Firm" name="Liver_Firm" required>
+                            <option value="1">否</option>
+                            <option value="2">是</option>
+                        </select>
+
+                            <label for="Spleen_Palpable">脾脏是否可触及：</label>
+                        <select id="Spleen_Palpable" name="Spleen_Palpable" required>
+                            <option value="1">否</option>
+                            <option value="2">是</option>
+                        </select>
+
+                        <label for="Spiders">是否出现蜘蛛痣：</label>
+                        <select id="Spiders" name="Spiders" required>
+                            <option value="1">否</option>
+                            <option value="2">是</option>
+                        </select>
+
+                        <label for="Ascites">是否出现腹水：</label>
+                        <select id="Ascites" name="Ascites" required>
+                            <option value="1">否</option>
+                            <option value="2">是</option>
+                        </select>
+
+                        <label for="Varices">是否静脉曲张：</label>
+                        <select id="Varices" name="Varices" required>
+                            <option value="1">否</option>
+                            <option value="2">是</option>
+                        </select>
+
+
+                        <label for="Histology">组织学检查是否异常：</label>
+                        <select id="Histology" name="Histology" required>
+                            <option value="1">否</option>
+                            <option value="2">是</option>
+                        </select>
+
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <!-- 所有右列的表单控件放在这里 -->
+                    <div class="form-group">
+                        <label for="Bilirubin">胆红素水平(mg/dL)：</label>
+                        <input type="text" id="Bilirubin" name="Bilirubin" required><br>
+
+                        <label for="Alk_Phosphate">碱性磷酸酶(U/L):</label>
+                        <input type="text" id="Alk_Phosphate" name="Alk_Phosphate"
+                               required><br>
+                        <label for="Sgot">血清谷草转氨酶(μ/L)：</label>
+                        <input type="text" id="Sgot" name="Sgot" required><br>
+
+                        <label for="Albumin">白蛋白(g/dL)：</label>
+                        <input type="text" id="Albumin" name="Albumin" required><br>
+
+
+                        <label for="Protime">凝血时间(s)：</label>
+                        <input type="text" id="Protime" name="Protime" required><br>
+
+
+                    </div>
+                </div>
+
+                <div class="col-12 text-center">
+                    <button class="subbutn" type="button" onclick="submitParameters()">提交数据，开始预测</button>
+                </div>
+            </form>
+            <div id="loadingIndicator" style="display:none;">加载中...</div>
+            <div id="resultMessage" style="display:none;"></div> <!-- 新添加的提示消息容器 -->
+            <div class="container mt-3" style="display: grid; place-items: center; min-height: 10vh;">
+                <!-- 这里放置你的组件内容 -->
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static '/js/chart.js' %}"></script>
+<script>
+    function submitParameters() {
+        var Age = document.getElementById("Age").value;
+        var Steroid = document.getElementById('Steroid').value;
+        var Antivirals = document.getElementById("Antivirals").value;
+        var Fatigue = document.getElementById('Fatigue').value;
+        var Malaise = document.getElementById("Malaise").value;
+        var Anorexia = document.getElementById("Anorexia").value;
+        var Liver_Big = document.getElementById("Liver_Big").value;
+        var Liver_Firm = document.getElementById("Liver_Firm").value;
+        var Spleen_Palpable = document.getElementById('Spleen_Palpable').value;
+        var Spiders = document.getElementById("Spiders").value;
+        var Sex = document.getElementById("Sex").value;
+        var Ascites = document.getElementById("Ascites").value;
+        var Varices = document.getElementById("Varices").value;
+        var Bilirubin = document.getElementById("Bilirubin").value;
+        var Alk_Phosphate = document.getElementById("Alk_Phosphate").value;
+        var Sgot = document.getElementById("Sgot").value;
+        var Albumin = document.getElementById("Albumin").value;
+        var Protime = document.getElementById("Protime").value;
+        var Histology = document.getElementById("Histology").value;
+
+        // 构建参数数组
+        var parameters = {
+            Age: Age,
+            Steroid: Steroid,
+            Antivirals: Antivirals,
+            Fatigue: Fatigue,
+            Malaise: Malaise,
+            Anorexia: Anorexia,
+            Liver_Big: Liver_Big,
+            Liver_Firm: Liver_Firm,
+            Spleen_Palpable: Spleen_Palpable,
+            Sex: Sex,
+            Spiders: Spiders,
+            Ascites: Ascites,
+            Varices: Varices,
+            Bilirubin: Bilirubin,
+            Alk_Phosphate: Alk_Phosphate,
+            Sgot: Sgot,
+            Albumin: Albumin,
+            Protime: Protime,
+            Histology: Histology,
+
+        };
+
+        // 将参数数组转换为 JSON 字符串
+        var parametersJSON = JSON.stringify(parameters);
+
+        document.getElementById('loadingIndicator').style.display = 'block';
+
+        // 使用 fetch API 将参数发送到后端
+        fetch('/cancer/HEpre/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: parametersJSON
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message);  // 使用后端提供的错误信息
+                    });
+                }
+                return response.json(); // 解析响应为JSON
+            })
+            .then(data => {
+                document.getElementById('loadingIndicator').style.display = 'none';
+                let resultMessage = document.getElementById('resultMessage');
+                if (data.result === 1) {
+                    resultMessage.innerHTML = "当前预测结果显示，该对象无明显致命风险。请保持现状，并监控后续变化。如需获取详细信息，请访问用户中心查阅完整报告。";
+                } else if (data.result === 2) {
+                    resultMessage.innerHTML = "当前预测结果显示，该对象存在较大致命风险。请及时就医。如需获取详细信息，请访问用户中心查阅完整报告。";
+                } else {
+                    resultMessage.innerHTML = data.message;
+                }
+                resultMessage.style.display = 'block'; // 显示提示消息
+            })
+            .catch(error => {
+                console.error(error);
+                let resultMessage = document.getElementById('resultMessage');
+                document.getElementById('loadingIndicator').style.display = 'none';
+                resultMessage.innerHTML = error.message;
+                resultMessage.style.display = 'block'; // 通过页面显示错误信息
+            });
+
+    }
+
+    function goBack() {
+        window.location.href = '/index/';
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+</body>
+
+</html>

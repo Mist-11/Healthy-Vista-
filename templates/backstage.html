@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理</title>
+    <link rel="icon" type="image/x-icon" href="{% static '/image/favicon.ico' %}" />
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static '/font/iconfont.css' %}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #00265f;
+            color: white;
+        }
+
+        .navbar-brand,
+        .navbar-text {
+            font-size: 18px !important;
+        }
+
+        .btn-logout,
+        .btn-user-center {
+            color: white;
+            border-radius: 5px;
+            padding: 5px 20px;
+            font-size: 18px;
+        }
+
+        .scrollname {
+            text-align: center;
+            font-size: 20px;
+            margin-top: 50px;
+        }
+
+        .scroll-box {
+            bottom: 20px;
+            left: 20px;
+            width: 90%;
+            height: 60%;
+            /* 增加高度以容纳表头 */
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            /* 圆角 */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            /* 阴影 */
+        }
+
+        .scroll-header {
+            height: 30px;
+            line-height: 30px;
+            padding: 0 10px;
+            box-sizing: border-box;
+            border-bottom: 1px solid #ccc;
+            font-weight: bold;
+            background-color: #00265f;
+            /* 表头背景颜色 */
+            color: white;
+            /* 表头文字颜色 */
+        }
+
+        #scrollContent {
+            overflow: hidden;
+            width: 95%;
+            height: 370px;
+            margin: auto;
+        }
+
+
+        #scrollContent tbody tr {
+            text-align: center;
+            border: none !important;
+            height: 30px;
+            line-height: 30px;
+            padding: 0 10px;
+            box-sizing: border-box;
+            border-bottom: 1px solid #ccc;
+            /* animation: scroll 5s linear infinite; */
+            animation: scroll 5s linear infinite normal;
+            top: 30px;
+            /* 与表头高度保持一致 */
+            width: 100%;
+            /* 占满整个宽度 */
+        }
+
+        th,
+        td {
+            text-align: center;
+            border: none !important;
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-120px);
+                /* 增加高度以容纳表头 */
+            }
+        }
+
+
+        #searchInput {
+            box-sizing: border-box;
+            width: 300px;
+            padding: 9px 20px;
+            margin-left: 15px;
+            border-radius: 20px 0 0 20px;
+            border: 1px solid #ccc;
+            border-right: none;
+
+            font-size: 16px;
+            background-color: #fff;
+            float: left;
+
+        }
+
+        #searchInput:focus-visible {
+            border: 1px solid #ccc !important;
+        }
+
+        /* 查询按钮样式 */
+        #searchButton {
+            box-sizing: border-box;
+            padding: 8px 20px;
+            border-radius: 0 20px 20px 0;
+            background-color: #00265f;
+            border: 2px solid #ccc;
+            border-left: none;
+            color: white;
+            cursor: pointer;
+            float: left;
+
+        }
+
+        #searchButton:hover {
+            background-color: #00265f;
+            color: white;
+            box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 查询结果显示区域样式 */
+        #searchResult {
+            margin-top: 20px;
+        }
+
+        .resultName {
+            width: 100px;
+            margin: auto;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 90%;
+            margin: auto;
+            margin-top: 10px;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th,
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        .bigcon {
+            width: 100%;
+            position: relative;
+        }
+
+        .leftcon,
+        .rightcon {
+            float: left;
+           
+        }
+
+        .leftcon {
+            width: 60%;
+
+        }
+
+        .rightcon {
+            width: 40%;
+        }
+
+        .searchbar {
+            height: 40px;
+            margin-top: 15px;
+            margin-left: 100px;
+        }
+
+        #userCount,
+        #predictionCount {
+            margin: auto;
+            color: #494949;
+            text-align: center;
+            width: 92%;
+        }
+
+        .top {
+            position: relative;
+            border-bottom: 1px solid rgb(183, 181, 181);
+        }
+
+        .popup {
+            border: rgb(88, 88, 88) 2px solid;
+            background-color: #fbfbfb;
+            margin: auto;
+            width: 50%;
+            height: 500px;
+            overflow-y: scroll;
+            position: absolute;
+            top: 10%;
+            left: 25%;
+
+        }
+
+        .popup table {
+            width: 95%;
+            text-align: center;
+
+
+        }
+
+        .popup table td {
+            text-align: center;
+            vertical-align: middle !important;
+
+        }
+
+        .puname {
+            text-align: center;
+            width: 100px;
+            margin: auto;
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .iconfont,
+        .btn {
+            font-size: 18px;
+            line-height: 25px;
+        }
+
+        .closebtn {
+            float: right;
+            margin-top: 10px;
+            color: #494949;
+            border: none;
+            background-color: transparent;
+        }
+
+        .closebtn span:hover {
+            color: rgb(246, 66, 66);
+        }
+
+        .detailBtn,
+        .obutton {
+            border: 2px solid rgb(147, 179, 215);
+            color: #000000;
+            border-radius: 5px;
+        }
+
+        .detailBtn:hover,
+        .obutton:hover {
+            background-color: #00265f;
+            color: white;
+            box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        .tablecon {
+            padding: 20px;
+            padding-top: 0;
+        }
+
+        .highlight {
+            color: #00265f;
+            font-size: 18px;
+        }
+
+        .btn:hover {
+            color: #fff;
+            font-weight: bold !important;
+        }
+
+        tbody {
+            overflow: hidden;
+            width: 100%;
+
+        }
+
+        thead tr th {
+            background-color: #fff;
+            color: #00265f;
+        }
+
+        .scroll-item td {
+            text-align: center;
+        }
+
+        #searchResult table {
+            margin: auto;
+            width: 100%;
+            border: 1px gainsboro solid;
+        }
+
+        #searchResult table tr:nth-child(1) {
+            background-color: #00265f;
+            color: #fff;
+        }
+
+        #searchResult table td {
+            text-align: center;
+            padding: 10px;
+        }
+
+        #searchResult {
+            margin: auto;
+            width: 90%;
+            max-height: 450px;
+            overflow-y: scroll;
+        }
+
+        .tablecon thead tr {
+            background-color: #00265f;
+            color: #fff;
+        }
+
+        /* 创建弹窗 */
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.5s linear;
+        }
+
+        .modal-content {
+
+            border-radius: 5px;
+            width: 500px;
+            text-align: center;
+        }
+
+        .close {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            right: 0;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .card-header {
+            position: relative;
+            background-color: #073d8f;
+            color: #fff;
+            text-align: center;
+            font-size: 24px;
+            padding: 20px 0;
+
+        }
+
+        .card-body {
+            padding: 20px;
+            color: #000;
+        }
+
+        .con,
+        .container {
+            margin: auto;
+        }
+
+        .createcard {
+            margin: auto;
+            background-color: #fff;
+            border-radius: 10px 10px 0 0;
+        }
+
+        #createModal .row {
+            margin: auto;
+            height: 550px;
+        }
+
+        #createModal .register-container {
+            width: 100%;
+        }
+
+        #createModal .form-group {
+            width: 500px;
+            margin-bottom: 4px !important;
+
+        }
+
+        .btn-register {
+            width: 200px;
+            height: 40px;
+            font-size: 18px;
+            background-color: #073d8f;
+            border: none;
+            color: #fff;
+        }
+
+        .btn-register:hover {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #createBtn {
+            position: absolute;
+           top: 20%;
+           right: 10%;
+            margin: auto;
+            text-align: center;
+            width: 150px;
+            height: 35px;
+            background-color: #00265f;
+            color: #fff;
+            border-radius: 10px;
+        }
+
+        #createBtn:hover {
+            font-weight: bold;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+    <script src="{% static '/js/bootstrap.min.js' %}"></script>
+    <script src="{% static '/js/jquery.min.js' %}"></script>
+
+    <nav class="navbar">
+        <span class="navbar-brand">系统后台</span>
+        <span class="navbar-text">Today: {{ current_date }}</span>
+        <span class="navbar-text">Welcome, {{ username }}</span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <a href="/" class="btn btn-user-center">
+            <span class="iconfont">&#xe66f;</span>
+            返回预测</a>
+        <a href="/logout/" class="btn btn-logout">
+            <span class="iconfont">&#xe6ce;</span>
+            退出登录</a>
+    </nav>
+    <div class="bigcon">
+        <div class="top">
+            <div id="userCount"></div>
+            <div id="predictionCount"></div>
+            <button id="createBtn">创建管理员</button>
+        </div>
+
+
+        <div class="leftcon">
+            <div class="searchbar">
+                <p style="float: left; line-height: 45px;">请输入用户名关键字以查询详情:</p>
+                <input type="text" id="searchInput" placeholder="用户名">
+                <button id="searchButton">
+                    <span class="iconfont">&#xe6ca;</span>
+                </button>
+            </div>
+
+
+            <!-- 查询结果显示区域 -->
+            <div id="searchResult"></div>
+
+
+        </div>
+        <div class="rightcon">
+            <div class="scrollname">用户近期预测情况</div>
+            <div id="scrollBox" class="scroll-box">
+                <table>
+                    <thead class="scroll-header">
+                        <tr>
+                            <th style="text-align: center;width: 50%;">时间</th>
+                            <th style="text-align: center;width: 10%;"></th>
+                            <th style="text-align: center;width: 20%">类型</th>
+                            <th style="text-align: center;width: 20%">用户名</th>
+                        </tr>
+                    </thead>
+                </table>
+                <div id="scrollContent">
+                    <table class="tbcon" id="recordsTable">
+                        <tbody class="tcon">
+                            {% for record in records %}
+                            <tr class="scroll-item">
+                                <td style="width: 40px;">{{ record.timestamp }}</td>
+                                <td>{{ record.type }}</td>
+                                <td></td>
+                                <td>{{ record.username }}</td>
+
+                                <td></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="createModal">
+        <div class="card-body">
+            <div class="con">
+                <div class="container">
+
+                    <div class="row justify-content-center">
+
+                        <div class="createcard">
+                            <div class="card-header">管理员注册 <span class="close">&times;</span></div>
+                            <div class="card-body">
+                                <form id="register-form" action="/singlecreate/" method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="name" class="form-show">用户名</label>
+                                        <input type="text" id="name" name="name" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email" class="form-show">电子邮件</label>
+                                        <input type="email" id="email" name="email" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="sex" class="form-show">性别</label>
+                                        <input type="text" id="sex" name="sex" class="form-control" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password" class="form-show">密码</label>
+                                        <input type="password" id="password" name="password" class="form-control"
+                                            required>
+                                    </div>
+                                    <div class="button-container" style="text-align: center;margin: 10px;">
+                                        <button type="submit" class="btn-register mr">注册</button>
+
+                                    </div>
+                                    <p style="font-size: 18px;">批量创建管理员</p>
+                                    <input type="hidden" id="csrfToken" value="{{ csrf_token }}">
+                                    <input type="file" id="excelFile" accept=".xlsx, .xls">
+                                    <button onclick="uploadFile()">上传文件</button>
+                                    <div id="message-container"></div>
+                                </form>
+                            </div>
+
+                            <div id="message-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+        const createBtn = document.getElementById('createBtn');
+        const createModal = document.getElementById('createModal');
+        const closeModal = document.querySelector('.close');
+        createBtn.addEventListener('click', function () {
+            createModal.style.visibility = 'visible';
+            createModal.style.opacity = '1';
+        });
+
+        // Close modal
+        closeModal.addEventListener('click', function () {
+            createModal.style.visibility = 'hidden';
+            createModal.style.opacity = '0';
+        });
+    </script>
+    <script>
+        // 监听按钮点击事件
+        document.getElementById("searchButton").addEventListener("click", function () {
+            // 获取查询条件
+            var searchword = document.getElementById("searchInput").value;
+            if (!searchword.trim()) { // .trim() 会移除字符串两边的空白字符
+                alert("请输入搜索关键字。"); // 显示弹窗提示
+                return; // 终止函数执行
+            }
+            // 发送 AJAX 请求获取数据
+            $.get("/backstage/searchuser", {
+                searchword: searchword
+            }, function (data) {
+                // 显示查询结果
+                displaySearchResult(data);
+            });
+        });
+
+        // 将后端返回的数据传入函数中，用于显示在页面上
+        function displaySearchResult(data) {
+            var resultDiv = document.getElementById("searchResult");
+            var detailDiv = document.getElementById("detailResult")
+            resultDiv.innerHTML = ""; // 清空之前的结果
+
+            // 创建表格
+            var table = document.createElement("table");
+            var headerRow = table.insertRow();
+            var headerUsername = headerRow.insertCell(0);
+            var headerEmail = headerRow.insertCell(1);
+            var headerSex = headerRow.insertCell(2)
+            var headerTimestamp = headerRow.insertCell(3);
+            var headerButton = headerRow.insertCell(4);
+            headerUsername.textContent = "用户名";
+            headerEmail.textContent = "用户邮箱";
+            headerSex.textContent = "用户性别";
+            headerTimestamp.textContent = "用户创建时间";
+            headerButton.textContent = "操作";
+
+            var ResultName = document.createElement("div");
+            ResultName.className = "resultName";
+            ResultName.textContent = "查询结果";
+
+            // 遍历每个字典并创建一个表格行，展示结果
+            data.forEach(function (item) {
+                var row = table.insertRow();
+                var cellUsername = row.insertCell(0);
+                var cellEmail = row.insertCell(1);
+                var cellSex = row.insertCell(2)
+                var cellTimestamp = row.insertCell(3);
+                var cellButton = row.insertCell(4);
+                cellUsername.textContent = item.username;
+                cellEmail.textContent = item.email;
+                cellSex.textContent = item.sex
+                // 格式化时间戳，你可能需要调整格式化方式
+                cellTimestamp.textContent = item.timestamp;
+                var button = document.createElement("button");
+                button.className = "detailBtn";
+                button.textContent = "查看详情";
+                button.addEventListener("click", function () {
+                    // 创建弹窗
+                    var popupDiv = document.createElement("div");
+                    popupDiv.className = "popup";
+
+                    var tableDiv = document.createElement("div");
+                    tableDiv.className = "tablecon";
+
+                    var divName = document.createElement("div");
+                    divName.className = "puname";
+                    divName.textContent = "预测历史";
+                    // 添加关闭按钮
+                    var closeButton = document.createElement("button");
+                    closeButton.className = "closebtn";
+                    // 创建span元素
+                    var span = document.createElement("span");
+                    span.className = "iconfont";
+                    span.innerHTML = "&#xe6ea;";
+
+                    // 将span追加到按钮中
+                    closeButton.appendChild(span);
+                    closeButton.addEventListener("click", function () {
+                        // 移除弹窗
+                        popupDiv.parentNode.removeChild(popupDiv);
+                    });
+                    popupDiv.appendChild(closeButton);
+                    popupDiv.appendChild(divName);
+                    popupDiv.appendChild(tableDiv);
+
+                    // 发送向后端请求详情的 AJAX 请求
+                    $.get("/backstage/detailuser", {
+                        username: item.username
+                    }, function (data) {
+                        var table = document.createElement("table");
+                        // 创建表头
+                        var thead = document.createElement("thead");
+                        var headerRow = thead.insertRow();
+                        var headerType = headerRow.insertCell(0);
+                        var headerTimestamp = headerRow.insertCell(1);
+                        var headerButton = headerRow.insertCell(2);
+                        headerType.textContent = "查询类型";
+                        headerTimestamp.textContent = "查询时间";
+                        headerButton.textContent = "操作";
+
+                        // 添加表头到表格中
+                        table.appendChild(thead);
+
+                        // 创建表体
+                        var tbody = document.createElement("tbody");
+
+                        // 在这里添加表格内容
+                        data.forEach(function (record) {
+                            var row = tbody.insertRow();
+                            var cellType = row.insertCell(0);
+                            var cellTimestamp = row.insertCell(1);
+                            var cellButton = row.insertCell(2);
+                            cellType.textContent = record.record_type;
+                            cellTimestamp.textContent = format_date(record.timestamp);
+
+                            // 如果有操作按钮，可以在这里添加
+                            var obutton = document.createElement("button");
+                            obutton.className = "obutton";
+                            obutton.textContent = "查看报告单";
+                            obutton.addEventListener("click", function () {
+                                const formattedDateTime = formatDate(
+                                    cellTimestamp.textContent);
+
+                                // 发送请求获取 PDF 数据
+                                fetch(
+                                        `/find_detail_record/${item.username}/${formattedDateTime}/`
+                                    )
+                                    .then(response => {
+                                        if (response.ok) {
+                                            return response
+                                                .blob(); // 将响应数据作为Blob对象返回
+                                        }
+                                        throw new Error(
+                                            'Network response was not ok.'
+                                        );
+                                    })
+                                    .then(blob => {
+                                        var fileURL = URL.createObjectURL(
+                                            blob); // 创建Blob URL
+                                        window.open(fileURL); // 在新窗口中打开PDF
+                                    })
+                                    .catch(error => {
+                                        console.error('Error fetching PDF:',
+                                            error);
+                                    });
+                            });
+                            cellButton.appendChild(obutton);
+                        });
+
+
+                        // 添加表体到表格中
+                        table.appendChild(tbody);
+
+                        // 将表格添加到页面中
+                        tableDiv.appendChild(table);
+                        // 将弹窗添加到页面中
+                        document.body.appendChild(popupDiv);
+                    });
+                });
+
+                cellButton.appendChild(button);
+            });
+
+            resultDiv.appendChild(ResultName);
+            resultDiv.appendChild(table);
+        }
+
+        // 将后端返回的数据传入函数中，用于显示在页面上  查看详情
+        function displayDetailResult(data) {
+            // var resultDiv = document.getElementById("searchResult");
+            var detailDiv = document.getElementById("detailResult");
+
+            detailDiv.innerHTML = ""; // 清空之前的结果
+
+            // 创建表格
+            var table = document.createElement("table");
+            var headerRow = table.insertRow();
+            var headerSearchType = headerRow.insertCell(0);
+            var headerTimestamp = headerRow.insertCell(1);
+            var headerButton = headerRow.insertCell(2);
+            headerSearchType.textContent = "查询类型";
+            headerTimestamp.textContent = "查询时间";
+            headerButton.textContent = "操作";
+
+            // 遍历每个字典并创建一个表格行，展示结果
+            data.forEach(function (item) {
+                var row = table.insertRow();
+                var cellSearchType = row.insertCell(0);
+                var cellTimestamp = row.insertCell(1);
+                var cellButton = row.insertCell(2);
+                cellSearchType.textContent = item.record_type;
+                // 格式化时间戳，你可能需要调整格式化方式
+                cellTimestamp.textContent = item.timestamp;
+                var button = document.createElement("button");
+                button.textContent = "查看历史记录";
+                button.addEventListener("click", function () {
+                    // 发送向后端请求详情的 AJAX 请求
+                    $.get("/backstage/detailuser", {
+                        username: item.username
+                    }, function (data) {
+                        console.log(data)
+                    });
+                });
+                cellButton.appendChild(button);
+            });
+
+            resultDiv.appendChild(table);
+        }
+
+        function formatDate(timestamp) {
+            return timestamp.replace(/\D/g, '');
+        }
+    </script>
+
+    <script>
+        function uploadFile() {
+            var file = document.getElementById('excelFile').files[0];
+            if (file) {
+                var formData = new FormData();
+                formData.append('excel_file', file);
+
+                $.ajax({
+                    url: '/batchcreate/', // 后端接收上传文件的URL
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    headers: {
+                        'X-CSRFToken': document.getElementById('csrfToken').value
+                    }, // 添加CSRF Token到请求头
+                    success: function (response) {
+                        handleResponse(response); // 处理响应
+                    },
+                    error: function (xhr, status, error) {
+                        handleResponse(xhr.responseJSON || {
+                            message: "文件上传失败"
+                        }); // 错误处理
+                    }
+                });
+            } else {
+                alert("请选择文件后上传");
+            }
+        }
+
+        function handleResponse(data) {
+            if (data.message) {
+                var messageContainer = document.getElementById('message-container');
+                messageContainer.innerHTML = '<div class="alert alert-info">' + data.message + '</div>'; // 显示返回的消息
+            }
+        }
+    </script>
+
+    <script>
+        function format_date(timestamp) {
+            var date = new Date(timestamp);
+            var year = date.getFullYear().toString().padStart(4, '0');
+            var month = (date.getMonth() + 1).toString().padStart(2, '0');
+            var day = date.getDate().toString().padStart(2, '0');
+            var hour = date.getHours().toString().padStart(2, '0');
+            var minute = date.getMinutes().toString().padStart(2, '0');
+            var seconds = date.getSeconds().toString().padStart(2, '0');
+            return year + '年' + month + '月' + day + '日 ' + hour + '时' + minute + '分' + seconds + "秒";
+        }
+
+        $(document).ready(function () {
+            var fetchInterval = 5000; // 每5秒钟获取一次新数据
+            function fetchRecentRecords() {
+                $.ajax({
+                    url: "/backstage/recentrecord",
+                    type: "GET",
+                    success: function (data) {
+                        console.log(data);
+                        var tbody = $("#recordsTable tbody");
+                        data.forEach(function (record) {
+                            var row = $('<tr>')
+                                .append($('<td>').text(format_date(record.timestamp)))
+                                .append($('<td>').text(record.type))
+                                .append($('<td>'))
+                                .append($('<td>').text(record.username))
+                                .append($('<td>'))
+                                .hide() // 初始时隐藏新行
+                                .prependTo(tbody) // 将新行添加到表格顶部
+                                .slideDown('slow'); // 慢慢显示新行
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching recent records:", error);
+                    }
+                });
+            }
+
+            // 定期获取数据
+            setInterval(fetchRecentRecords, fetchInterval);
+
+            // 初始化获取数据
+            fetchRecentRecords();
+            fetchRecentRecords();
+            fetchRecentRecords();
+        });
+
+        // 添加查看详情的函数
+        function findDetailRecord(timestamp, username) {
+
+            const formattedDateTime = formatDate(timestamp);
+            const formattedUsername = String(username);
+            const formattedTimestamp = String(formattedDateTime);
+            // 发送请求获取 PDF 数据
+            fetch(`/find_detail_record/${formattedUsername}/${formattedTimestamp}/`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob(); // 将响应数据作为Blob对象返回
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                .then(blob => {
+                    var fileURL = URL.createObjectURL(blob); // 创建Blob URL
+                    window.open(fileURL); // 在新窗口中打开PDF
+                })
+                .catch(error => {
+                    console.error('Error fetching PDF:', error);
+                });
+
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            // 发起 AJAX 请求获取数据
+            $.get("/backstage/count", function (data) {
+                // 更新页面内容
+                $("#userCount").html("本系统一共注册了 <span class='highlight'>" + data.usernum +
+                    "</span> 个用户");
+                $("#predictionCount").html("共预测了<span class='highlight'> " + data.predictionnum +
+                    "</span>  次");
+            });
+        });
+    </script>
+
+    <script>
+        document.getElementById('register-form').addEventListener('submit', function (event) {
+            event.preventDefault(); // 阻止表单默认提交行为
+
+            var formData = new FormData(this);
+
+            fetch('/singlecreate/', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        data.message = '网络错误,请重试。';
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.message) {
+                        var messageContainer = document.getElementById('message-container');
+                        messageContainer.innerHTML = '<div class="alert alert-info">' + data.message +
+                            '</div>';
+                    }
+                })
+        });
+    </script>
+</body>
+
+</html>

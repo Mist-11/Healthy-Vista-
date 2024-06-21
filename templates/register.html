@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="icon" type="image/x-icon" href="{% static '/image/favicon.ico' %}"/>
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <style>
+         body,
+        html {
+            margin: 0;
+            padding: 0;
+            min-width: 1920px;
+            height: 100%;
+            overflow: hidden;
+            background-color: #00265f;
+            /* 提供一个背景颜色以填补可能出现的空白区域 */
+        }
+        .con {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            /* 防止图片溢出视口 */
+        }
+
+        #rotate-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120vw;
+            /* 增加宽度以确保覆盖 */
+            height: 120vw;
+            /* 增加高度以确保覆盖 */
+            transform: translate(-50%, -50%) scale(1);
+            /* 调整平移和缩放 */
+            object-fit: cover;
+            filter: sepia(1) saturate(8) hue-rotate(180deg) brightness(0.7) contrast(1.5);
+           
+        }
+
+        .register-container {
+            margin-top: 100px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #00265f;
+            color: white;
+            text-align: center;
+            font-size: 24px;
+            padding: 20px 0;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 5px !important;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-register {
+            background-color: #00265f;
+            color: white;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 18px;
+            width: 100%;
+            margin-right: 10px;
+        }
+
+        .btn-back {
+            background-color: #00265f;
+            color: white;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 18px;
+            width: 100%;
+            margin-left: 10px;
+        }
+
+        .form-show {
+            color: #000000;
+        }
+        .btn:hover{
+            color: #fff;
+            font-weight: bold;
+        }
+ 
+    </style>
+</head>
+<body>
+    <div class="con">
+        <img src="../static/image/bg.png" id="rotate-image" alt="Rotating image">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-4 register-container">
+                    <div class="card">
+                        <div class="card-header">注册</div>
+                        <div class="card-body">
+                            <form id="register-form" action="/register/" method="post">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="name" class="form-show">用户名</label>
+                                    <input type="text" id="name" name="name" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email" class="form-show">电子邮件</label>
+                                    <input type="email" id="email" name="email" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sex" class="form-show">性别</label>
+                                    <input type="text" id="sex" name="sex" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password" class="form-show">密码</label>
+                                    <input type="password" id="password" name="password" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="again-password" class="form-show">确认密码</label>
+                                    <input type="password" id="again-password" name="again-password" class="form-control"
+                                    required>
+                                </div>
+                                <div class="button-container">
+                                    <button type="submit" class="btn btn-register mr">注册</button>
+                                    <a class="btn btn-back mr" href="/" role="button">返回</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div id="message-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    document.getElementById('register-form').addEventListener('submit', function (event) {
+        event.preventDefault(); // 阻止表单默认提交行为
+
+        var formData = new FormData(this);
+
+        fetch('/register/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    data.message = '网络错误,请重试。';
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.message) {
+                    var messageContainer = document.getElementById('message-container');
+                    messageContainer.innerHTML = '<div class="alert alert-info">' + data.message + '</div>';
+                }
+                if (data.redirect_url) {
+                    window.location.href = data.redirect_url; // 重定向到新页面
+                }
+            })
+    });
+</script>
+</body>
+</html>
